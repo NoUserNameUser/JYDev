@@ -4,6 +4,8 @@ out
 build
 .git
 .gitignore
+.claude
+Portfolio.html
 .env
 .env.*
 .env*.local
