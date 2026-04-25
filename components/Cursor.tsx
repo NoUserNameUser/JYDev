@@ -34,6 +34,10 @@ export default function Cursor() {
       if (total <= 0) return;
       const pct = window.scrollY / total;
       threadDot.style.top = pct * 100 + "vh";
+
+      // Fade out scroll hint once user starts scrolling
+      const hint = document.getElementById("scroll-hint");
+      if (hint) hint.style.opacity = String(Math.max(0, 1 - window.scrollY / 80));
     };
     window.addEventListener("scroll", onScroll, { passive: true });
 
