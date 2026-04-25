@@ -33,7 +33,6 @@ RUN addgroup --system --gid 1001 nodejs \
 # `output: "standalone"` produces these two folders.
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-# Copy public if it exists (won't error if empty/missing because of the trailing slash)
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 USER nextjs
