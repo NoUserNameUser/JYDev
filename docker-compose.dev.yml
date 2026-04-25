@@ -1,0 +1,21 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: portfolio:dev
+    container_name: portfolio-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_TELEMETRY_DISABLED=1
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes:
+      # Bind the source, but keep node_modules and .next inside the container
+      # so the host OS doesn't clobber platform-specific binaries.
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
