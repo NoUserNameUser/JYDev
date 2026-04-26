@@ -1,8 +1,14 @@
-@import "../styles/tokens.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --font-syne: "Syne", sans-serif;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "DM Mono", monospace;
+  --gold: #a07c28;
+  --gold2: #c9a24a;
+}
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -10,8 +16,8 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-sans);
-  background: var(--color-background);
-  color: var(--color-foreground);
+  background: #F6F3EC;
+  color: #1a1712;
   overflow-x: hidden;
   cursor: none;
 }
@@ -41,7 +47,7 @@ body::after {
 #cd {
   width: 6px;
   height: 6px;
-  background: var(--color-primary);
+  background: var(--gold);
   transition: background 0.15s;
 }
 
@@ -59,11 +65,11 @@ body::after {
 body.cursor-hl #cr {
   width: 52px;
   height: 52px;
-  border-color: var(--color-primary);
+  border-color: var(--gold);
 }
 
 body.cursor-hl #cd {
-  background: var(--color-primary-hover);
+  background: var(--gold2);
 }
 
 /* ── Golden thread ── */
@@ -76,8 +82,8 @@ body.cursor-hl #cd {
   background: linear-gradient(
     to bottom,
     transparent 5%,
-    var(--color-primary) 30%,
-    var(--color-primary) 70%,
+    var(--gold) 30%,
+    var(--gold) 70%,
     transparent 95%
   );
   opacity: 0.18;
@@ -91,10 +97,10 @@ body.cursor-hl #cd {
   top: 0;
   width: 5px;
   height: 5px;
-  background: var(--color-primary);
+  background: var(--gold);
   border-radius: 50%;
   transform: translateX(-2px);
-  box-shadow: 0 0 12px var(--color-primary);
+  box-shadow: 0 0 12px var(--gold);
   z-index: 11;
   pointer-events: none;
   transition: top 0.06s linear;
@@ -116,12 +122,12 @@ body.cursor-hl #cd {
 /* ── Selection ── */
 ::selection {
   background: #c9a24a;
-  color: var(--color-background);
+  color: #F6F3EC;
 }
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--color-background); }
+::-webkit-scrollbar-track { background: #F6F3EC; }
 ::-webkit-scrollbar-thumb { background: #d4c89a; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #a07c28; }
 
