@@ -1,0 +1,17 @@
+# Development image — runs `next dev` with hot reload.
+# Mount the project as a volume via docker-compose.dev.yml.
+FROM node:20-alpine
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+ENV NEXT_TELEMETRY_DISABLED=1
+# Needed for file-watching to work reliably across the Docker bind mount on
+# macOS/Windows hosts.
+ENV CHOKIDAR_USEPOLLING=true
+ENV WATCHPACK_POLLING=true
+
+COPY package.json package-lock.json* ./
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
