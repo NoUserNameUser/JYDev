@@ -5,14 +5,14 @@ export const siteConfig = {
   title: "Jackie Ye - Full Stack Developer",
   description:
     "Full stack developer building digital products from idea to deployment. Every encounter is meaningful.",
-  url: "https://jackieye.dev",
-  email: "hi@jackieye.dev",
+  url: "https://jackiey.me",
+  email: "find.jackie@yahoo.com",
   logoText: "J-Y",
   tagline: "Every encounter is meaningful.",
   chineseTagline: "每一次相遇，都是缘分。",
   social: {
-    github: "https://github.com/",
-    linkedin: "https://linkedin.com/",
+    github: "https://github.com/NoUserNameUser/JYDev",
+    linkedin: "https://www.linkedin.com/in/jackie-ye-77b37b70/",
     resume: "#",
   },
 } as const;
