@@ -24,29 +24,29 @@ export const homeHero: HeroContent = {
   primaryAction: { label: "Start a Conversation", href: "#contact" },
   secondaryAction: { label: "See what I build", href: "#build" },
   metrics: [
-    { value: "7", suffix: "+", label: "Years shipping" },
+    { value: "5", suffix: "+", label: "Years shipping" },
     { value: "20", suffix: "+", label: "Products built" },
     { value: "∞", label: "Ideas welcomed" },
   ],
 };
 
 export const marqueeItems = [
+  "Python",
+  "PHP",
+  "JavaScript",
+  "TypeScript",
+  "Java",
+  "Node.js",
   "React",
   "Next.js",
-  "TypeScript",
-  "Node.js",
-  "Python",
-  "FastAPI",
-  "PostgreSQL",
-  "MongoDB",
-  "Redis",
+  "Spring Boot",
+  "MySQL",
   "Docker",
-  "AWS",
-  "GraphQL",
-  "Figma",
+  "AWS CodeDeploy",
   "Git",
-  "Tailwind",
-  "Prisma",
+  "GitHub",
+  "Bash/Shell",
+  "CI/CD",
 ];
 
 export const aboutContent = {
@@ -58,14 +58,14 @@ export const aboutContent = {
   headlineHighlight: "meaningful",
   headlineSuffix: " - including this one.",
   paragraphs: [
-    "I'm Jackie, a full stack developer based in Asia-Pacific. I don't just write code - I listen to understand what you're truly trying to achieve, then build the most direct, elegant path to get you there.",
-    "My approach is simple: understand deeply, plan precisely, execute efficiently. Whether it's a startup idea, a business tool, or a creative platform - if you can imagine it, I can build it.",
+    "I'm Jackie, a full stack developer based in Asia-Pacific with 5+ years of experience. I don't just write code - I listen to understand what you're truly trying to achieve, then build the most direct, elegant path to get you there.",
+    "My approach is simple: understand deeply, plan precisely, execute efficiently. Whether it's a startup idea, a business tool, or a creative platform - if you can imagine it, I can build it. Fluent in English, with native proficiency in Cantonese and Chinese.",
   ],
   values: [
-    { icon: "◆", title: "Understand First", description: "Listen, then build" },
+    { icon: "◆", title: "Solution Oriented", description: "Focus on outcomes" },
     { icon: "◆", title: "Ship Fast, Ship Right", description: "Speed with craft" },
     { icon: "◆", title: "End-to-End Ownership", description: "Design -> Deploy" },
-    { icon: "◆", title: "Long-term Thinking", description: "Built to scale" },
+    { icon: "◆", title: "Clear Communicator", description: "Transparent & direct" },
   ] satisfies ValueItem[],
 };
 
@@ -77,19 +77,19 @@ export const serviceContent = {
       number: "01",
       title: "Products & Apps",
       body: "Full-stack web and mobile applications - from idea to deployed product. I handle architecture, database, API, and UI with equal care.",
-      tags: ["React", "Next.js", "Node.js", "PostgreSQL"],
+      tags: ["React", "Next.js", "Node.js", "PHP", "Spring Boot"],
     },
     {
       number: "02",
       title: "APIs & Systems",
       body: "Scalable backends, microservices, and integrations that power products at scale. Performance and reliability are non-negotiable.",
-      tags: ["Python", "FastAPI", "GraphQL", "Docker"],
+      tags: ["Python", "Java", "MySQL", "Docker", "AWS CodeDeploy"],
     },
     {
       number: "03",
       title: "Interfaces & Craft",
       body: "Interfaces that feel alive. I bridge design and engineering to create digital experiences that your users will love and remember.",
-      tags: ["TypeScript", "Tailwind", "Framer", "Figma"],
+      tags: ["TypeScript", "JavaScript", "Git", "CI/CD"],
     },
   ] satisfies ServicePillar[],
 };
