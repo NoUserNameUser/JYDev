@@ -24,7 +24,7 @@ export const homeHero: HeroContent = {
   primaryAction: { label: "Open the playground", href: "#build" },
   secondaryAction: { label: "Start a project", href: "#contact" },
   metrics: [
-    { value: "7", suffix: "+", label: "Years shipping" },
+    { value: "5", suffix: "+", label: "Years shipping" },
     { value: "20", suffix: "+", label: "Products built" },
     { value: "0", suffix: "->1", label: "Favorite stage" },
   ],
@@ -35,6 +35,7 @@ export const marqueeItems = [
   "Product strategy",
   "Next.js",
   "TypeScript",
+  "Java",
   "Node.js",
   "Python",
   "APIs",
