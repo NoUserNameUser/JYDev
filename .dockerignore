@@ -24,3 +24,5 @@ media
 coverage
 *.log
 *.tsbuildinfo
+mockups
+next-env.d.ts

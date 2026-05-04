@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 # Production image for the Next.js + Payload app.
 
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
