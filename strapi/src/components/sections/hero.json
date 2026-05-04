@@ -1,0 +1,37 @@
+{
+  "collectionName": "components_sections_heroes",
+  "info": {
+    "displayName": "Hero Section",
+    "description": "Primary page hero content"
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "heading": {
+      "type": "string",
+      "required": true
+    },
+    "body": {
+      "type": "text"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "primaryAction": {
+      "type": "component",
+      "component": "shared.link"
+    },
+    "secondaryAction": {
+      "type": "component",
+      "component": "shared.link"
+    },
+    "visible": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}
