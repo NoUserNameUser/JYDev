@@ -1,4 +1,1 @@
-export type CMSImage = {
-  url: string;
-  alt?: string;
-};
+export type { CMSMedia as CMSImage } from "./media";
