@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 
 import type { HeroContent } from "@/types/content";
 import styles from "./PortfolioSections.module.css";
@@ -9,206 +10,281 @@ type HeroSectionProps = {
   content: HeroContent;
 };
 
+const playModes = [
+  {
+    label: "Prototype",
+    accent: "#77e5c8",
+    partner: "#ff7a5c",
+    copy: "Shape the first version fast, then keep the fun parts honest with real product logic.",
+    stat: "fast loops",
+  },
+  {
+    label: "Systems",
+    accent: "#b6f35a",
+    partner: "#77e5c8",
+    copy: "Turn messy workflows into durable apps, APIs, automations, and admin surfaces.",
+    stat: "clean cores",
+  },
+  {
+    label: "Interface",
+    accent: "#f2c94c",
+    partner: "#ff7a5c",
+    copy: "Make the front door feel alive with motion, feedback, and details people can touch.",
+    stat: "human UX",
+  },
+] as const;
+
 export function HeroSection({ content }: HeroSectionProps) {
-  const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const kickerRef = useRef<HTMLDivElement>(null);
-  const introRef = useRef<HTMLDivElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-  const metaRef = useRef<HTMLDivElement>(null);
+  const activeModeRef = useRef(0);
+  const [activeMode, setActiveMode] = useState(0);
+
+  useEffect(() => {
+    activeModeRef.current = activeMode;
+  }, [activeMode]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let width = 0;
     let height = 0;
-    let rafId: number;
+    let rafId = 0;
 
-    const resize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+    const pointer = {
+      x: window.innerWidth * 0.68,
+      y: window.innerHeight * 0.45,
+      active: false,
     };
-    resize();
-    window.addEventListener("resize", resize);
 
-    const paths = Array.from({ length: 5 }, () => ({
-      pts: Array.from({ length: 6 }, (_, j) => ({
-        x: Math.random() * window.innerWidth,
-        y: (j / 5) * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.08,
-      })),
-      alpha: Math.random() * 0.035 + 0.008,
+    const nodes = Array.from({ length: 46 }, (_, index) => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      size: 2 + Math.random() * 3,
+      offset: index * 0.23,
     }));
 
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height);
-      paths.forEach((path) => {
-        path.pts.forEach((p) => {
-          p.x += p.vx;
-          p.y += p.vy;
-          if (p.x < -width * 0.2) p.vx = Math.abs(p.vx);
-          if (p.x > width * 1.2) p.vx = -Math.abs(p.vx);
-          if (p.y < 0) p.vy = Math.abs(p.vy);
-          if (p.y > height) p.vy = -Math.abs(p.vy);
-        });
-        ctx.beginPath();
-        ctx.moveTo(path.pts[0].x, path.pts[0].y);
-        for (let i = 1; i < path.pts.length - 2; i += 1) {
-          const mx = (path.pts[i].x + path.pts[i + 1].x) / 2;
-          const my = (path.pts[i].y + path.pts[i + 1].y) / 2;
-          ctx.quadraticCurveTo(path.pts[i].x, path.pts[i].y, mx, my);
-        }
-        ctx.strokeStyle = `rgba(140,100,20,${path.alpha})`;
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      });
-      rafId = requestAnimationFrame(draw);
+    const pulses: Array<{ x: number; y: number; radius: number; alpha: number; color: string }> = [];
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = rect.width;
+      height = rect.height;
+      canvas.width = Math.max(1, Math.floor(width * dpr));
+      canvas.height = Math.max(1, Math.floor(height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
+
+    const addPulse = (x: number, y: number) => {
+      const mode = playModes[activeModeRef.current];
+      pulses.push({ x, y, radius: 8, alpha: 0.72, color: mode.partner });
+      if (pulses.length > 14) pulses.shift();
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      pointer.x = event.clientX;
+      pointer.y = event.clientY;
+      pointer.active = true;
+    };
+
+    const onPointerLeave = () => {
+      pointer.active = false;
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      addPulse(event.clientX, event.clientY);
+    };
+
+    resize();
+    window.addEventListener("resize", resize);
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerleave", onPointerLeave);
+    window.addEventListener("pointerdown", onPointerDown, { passive: true });
+
+    const drawGrid = () => {
+      ctx.save();
+      ctx.globalAlpha = 0.3;
+      ctx.strokeStyle = "rgba(245, 241, 232, 0.08)";
+      ctx.lineWidth = 1;
+      for (let x = 0; x < width; x += 56) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < height; y += 56) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    };
+
+    const draw = (time = 0) => {
+      const mode = playModes[activeModeRef.current];
+      ctx.clearRect(0, 0, width, height);
+      drawGrid();
+
+      nodes.forEach((node, index) => {
+        const dx = pointer.x - node.x;
+        const dy = pointer.y - node.y;
+        const dist = Math.max(1, Math.hypot(dx, dy));
+        const force = pointer.active ? Math.min(1.8, 140 / dist) : 0.18;
+        const orbit = Math.sin(time * 0.0007 + node.offset) * 0.08;
+
+        node.vx += (dx / dist) * force * 0.018 + orbit * 0.01;
+        node.vy += (dy / dist) * force * 0.018 + Math.cos(time * 0.0005 + node.offset) * 0.004;
+        node.vx *= 0.965;
+        node.vy *= 0.965;
+        node.x += node.vx;
+        node.y += node.vy;
+
+        if (node.x < -20) node.x = width + 20;
+        if (node.x > width + 20) node.x = -20;
+        if (node.y < -20) node.y = height + 20;
+        if (node.y > height + 20) node.y = -20;
+
+        for (let j = index + 1; j < nodes.length; j += 1) {
+          const other = nodes[j];
+          const linkDistance = Math.hypot(node.x - other.x, node.y - other.y);
+          if (linkDistance < 150) {
+            ctx.globalAlpha = (1 - linkDistance / 150) * 0.18;
+            ctx.strokeStyle = mode.accent;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(node.x, node.y);
+            ctx.lineTo(other.x, other.y);
+            ctx.stroke();
+          }
+        }
+
+        ctx.globalAlpha = 0.85;
+        ctx.fillStyle = index % 5 === 0 ? mode.partner : mode.accent;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      pulses.forEach((pulse, index) => {
+        ctx.globalAlpha = pulse.alpha;
+        ctx.strokeStyle = pulse.color;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(pulse.x, pulse.y, pulse.radius, 0, Math.PI * 2);
+        ctx.stroke();
+        pulse.radius += 2.4;
+        pulse.alpha *= 0.94;
+        if (pulse.alpha < 0.02) pulses.splice(index, 1);
+      });
+
+      ctx.globalAlpha = 1;
+      if (!reducedMotion) {
+        rafId = requestAnimationFrame(draw);
+      }
+    };
+
     draw();
 
     return () => {
       window.removeEventListener("resize", resize);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerleave", onPointerLeave);
+      window.removeEventListener("pointerdown", onPointerDown);
       cancelAnimationFrame(rafId);
     };
   }, []);
 
-  useEffect(() => {
-    const ease = (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
-    const band = (p: number, start: number, end: number) =>
-      ease(Math.max(0, Math.min(1, (p - start) / (end - start))));
-
-    const onScroll = () => {
-      const wrap = wrapRef.current;
-      if (!wrap) return;
-      const rect = wrap.getBoundingClientRect();
-      const scrollable = wrap.offsetHeight - window.innerHeight;
-      const p = scrollable > 0 ? Math.max(0, Math.min(1, -rect.top / scrollable)) : 0;
-
-      if (kickerRef.current) {
-        const t = band(p, 0.15, 0.45);
-        kickerRef.current.style.opacity = String(t);
-        kickerRef.current.style.transform = `translateY(${(1 - t) * 22}px)`;
-      }
-
-      if (introRef.current) {
-        const t = band(p, 0.45, 0.72);
-        introRef.current.style.opacity = String(t);
-        introRef.current.style.transform = `translateY(${(1 - t) * 28}px)`;
-      }
-
-      if (ctaRef.current) {
-        const t = band(p, 0.7, 0.92);
-        ctaRef.current.style.opacity = String(t);
-        ctaRef.current.style.transform = `translateY(${(1 - t) * 22}px)`;
-      }
-
-      if (metaRef.current) {
-        const t = band(p, 0.75, 0.97);
-        metaRef.current.style.opacity = String(t);
-        metaRef.current.style.transform = `translateY(${(1 - t) * 16}px)`;
-      }
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const mode = playModes[activeMode];
 
   return (
-    <div ref={wrapRef} id="hero" className={styles.heroWrap}>
-      <div className={styles.heroSticky}>
-        <canvas ref={canvasRef} className={styles.heroCanvas} />
+    <section id="hero" className={styles.hero}>
+      <canvas ref={canvasRef} className={styles.heroCanvas} aria-hidden="true" />
 
-        <div className={styles.heroContent}>
-          <div
-            ref={kickerRef}
-            className={styles.heroKicker}
-          >
-            <span className={styles.heroKickerLine} />
+      <div className={styles.heroShell}>
+        <div className={styles.heroCopy}>
+          <div className={styles.heroKicker}>
+            <span className={styles.signalDot} />
             {content.eyebrow}
           </div>
 
           <h1 className={styles.heroTitle}>
-            {content.titleLines.map((line, index) => (
-              <span key={line} className={styles.heroTitleMask}>
-                <span
-                  className={`${styles.heroTitleText} ${heroTitleDelayClasses[index] ?? styles.heroTitleDelay0}`}
-                >
-                  {line}
-                </span>
-              </span>
-            ))}
-            <span className={styles.heroTitleLine}>
-              <span
-                className={styles.heroTitleTextAlt}
-              >
-                {content.highlightedTitleLine}
-                <span className={styles.heroTitleDot}>.</span>
-              </span>
-            </span>
+            <span>{content.titleLines.join(" ")}</span>
+            <span className={styles.heroTitleAccent}>{content.highlightedTitleLine}</span>
           </h1>
 
-          <div ref={introRef} className={styles.heroIntro}>
-            <p className={styles.heroIntroText}>
-              {content.descriptionPrefix}
-              <strong className={styles.strongText}>{content.descriptionStrong}</strong>
-              {content.descriptionSuffix}
-            </p>
-          </div>
+          <p className={styles.heroIntroText}>
+            {content.descriptionPrefix}
+            <strong>{content.descriptionStrong}</strong>
+            {content.descriptionSuffix}
+          </p>
 
-          <div ref={ctaRef} className={styles.heroActions}>
-            <a
-              href={content.primaryAction.href}
-              data-magnet
-              className={styles.primaryAction}
-            >
-              {content.primaryAction.label} →
+          <div className={styles.heroActions}>
+            <a href={content.primaryAction.href} data-magnet className={styles.primaryAction}>
+              {content.primaryAction.label}
+              <span aria-hidden="true">-&gt;</span>
             </a>
-            <a
-              href={content.secondaryAction.href}
-              className={styles.ghostAction}
-            >
+            <a href={content.secondaryAction.href} className={styles.ghostAction}>
               {content.secondaryAction.label}
-              <span className={styles.ghostArrow}>
-                →
-              </span>
             </a>
+          </div>
+
+          <div className={styles.modeDock} role="group" aria-label="Portfolio modes">
+            {playModes.map((item, index) => (
+              <button
+                key={item.label}
+                type="button"
+                className={`${styles.modeButton} ${index === activeMode ? styles.modeButtonActive : ""}`}
+                onClick={() => setActiveMode(index)}
+              >
+                <span className={styles.modeIndex}>0{index + 1}</span>
+                {item.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div
-          ref={metaRef}
-          className={styles.heroMetrics}
-        >
-          {content.metrics.map((metric) => (
-            <div key={metric.label}>
-              <div className={styles.heroMetricValue}>
-                {metric.value}
-                {metric.suffix && <sup className={styles.heroMetricSuffix}>{metric.suffix}</sup>}
-              </div>
-              <div className={styles.heroMetricLabel}>
-                {metric.label}
-              </div>
-            </div>
-          ))}
-        </div>
+        <aside className={styles.playPanel} style={{ "--panel-accent": mode.accent } as CSSProperties}>
+          <div className={styles.panelChrome} aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className={styles.panelEyebrow}>Current build mode</div>
+          <h2 className={styles.panelTitle}>{mode.label}</h2>
+          <p className={styles.panelCopy}>{mode.copy}</p>
 
-        <div
-          id="scroll-hint"
-          className={styles.scrollHint}
-        >
-          <span className={styles.scrollHintArrow}>↓</span>
-          Scroll
-        </div>
+          <div className={styles.heroMetrics}>
+            {content.metrics.map((metric) => (
+              <div key={metric.label} className={styles.heroMetric}>
+                <div className={styles.heroMetricValue}>
+                  {metric.value}
+                  {metric.suffix && <sup>{metric.suffix}</sup>}
+                </div>
+                <div className={styles.heroMetricLabel}>{metric.label}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.signalStack} aria-hidden="true">
+            <span style={{ width: activeMode === 0 ? "92%" : "62%" }} />
+            <span style={{ width: activeMode === 1 ? "88%" : "54%" }} />
+            <span style={{ width: activeMode === 2 ? "84%" : "58%" }} />
+          </div>
+
+          <div className={styles.panelFooter}>
+            <span>{mode.stat}</span>
+            <span>Jackie Ye</span>
+          </div>
+        </aside>
       </div>
-    </div>
+    </section>
   );
 }
-  const heroTitleDelayClasses = [
-    styles.heroTitleDelay0,
-    styles.heroTitleDelay1,
-    styles.heroTitleDelay2,
-  ];

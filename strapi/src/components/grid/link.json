@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_grid_links",
+  "info": {
+    "displayName": "Link",
+    "description": "Inline editorial link"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "href": {
+      "type": "string",
+      "required": true
+    },
+    "openInNewTab": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

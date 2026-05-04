@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "grids",
+  "info": {
+    "singularName": "grid",
+    "pluralName": "grids",
+    "displayName": "Grid",
+    "description": "Homepage spatial canvas panels"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "kicker": {
+      "type": "string",
+      "required": true
+    },
+    "meta": {
+      "type": "string",
+      "required": true
+    },
+    "kind": {
+      "type": "enumeration",
+      "enum": ["hero", "image", "text", "index", "quote"],
+      "default": "text",
+      "required": true
+    },
+    "elements": {
+      "type": "dynamiczone",
+      "components": ["grid.background", "grid.text", "grid.image", "grid.link", "grid.button", "grid.shape"]
+    },
+    "localCss": {
+      "type": "text"
+    },
+    "orderIndex": {
+      "type": "integer",
+      "required": true,
+      "unique": true
+    }
+  }
+}
