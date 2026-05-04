@@ -1,29 +1,33 @@
 :root {
-  --font-syne: "Syne", sans-serif;
-  --font-sans: "DM Sans", system-ui, sans-serif;
-  --font-mono: "DM Mono", monospace;
+  --font-display: "Aptos Display", "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Aptos", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Cascadia Mono", "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
 
-  --color-background: #f6f3ec;
-  --color-foreground: #1a1712;
-  --color-surface: #edeae0;
-  --color-primary: #a07c28;
-  --color-primary-hover: #c9a24a;
-  --color-muted: rgba(26, 23, 18, 0.45);
-  --color-muted-strong: rgba(26, 23, 18, 0.6);
-  --color-border: rgba(26, 23, 18, 0.09);
-  --color-primary-soft: rgba(197, 162, 74, 0.05);
-  --color-primary-soft-hover: rgba(197, 162, 74, 0.12);
-  --color-primary-border: rgba(197, 162, 74, 0.35);
-  --color-primary-border-hover: rgba(197, 162, 74, 0.3);
-  --color-primary-faint: rgba(197, 162, 74, 0.12);
+  --color-background: #101214;
+  --color-foreground: #f5f1e8;
+  --color-surface: #181b1f;
+  --color-surface-raised: #20242a;
+  --color-primary: #77e5c8;
+  --color-primary-hover: #b6f35a;
+  --color-secondary: #ff7a5c;
+  --color-tertiary: #f2c94c;
+  --color-muted: rgba(245, 241, 232, 0.58);
+  --color-muted-strong: rgba(245, 241, 232, 0.76);
+  --color-border: rgba(245, 241, 232, 0.12);
+  --color-border-strong: rgba(245, 241, 232, 0.24);
+  --color-primary-soft: rgba(119, 229, 200, 0.12);
+  --color-primary-soft-hover: rgba(119, 229, 200, 0.2);
+  --color-primary-border: rgba(119, 229, 200, 0.36);
+  --color-primary-border-hover: rgba(182, 243, 90, 0.45);
+  --color-primary-faint: rgba(119, 229, 200, 0.2);
 
   --radius-sm: 4px;
   --radius-md: 8px;
-  --radius-pill: 100px;
+  --radius-pill: 999px;
 
-  --container-padding-x: 64px;
-  --container-padding-left: 84px;
-  --section-padding-y: 120px;
-  --section-heading-gap: 72px;
+  --container-padding-x: clamp(20px, 5vw, 72px);
+  --container-padding-left: clamp(20px, 5vw, 72px);
+  --section-padding-y: clamp(76px, 10vw, 132px);
+  --section-heading-gap: clamp(28px, 5vw, 56px);
   --section-rule-margin: 0 var(--container-padding-x) 0 var(--container-padding-left);
 }

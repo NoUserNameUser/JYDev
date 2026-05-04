@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jackie Ye Homepage Mockup Board V2</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #101010;
+      color: #f4f1ea;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .board {
+      width: 1800px;
+      padding: 34px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.06), transparent 35%),
+        radial-gradient(circle at 86% 8%, rgba(210, 196, 160, .15), transparent 24%),
+        #101010;
+    }
+    .board-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 40px;
+      margin-bottom: 28px;
+      padding: 0 6px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      letter-spacing: -.02em;
+    }
+    .hint {
+      max-width: 680px;
+      color: rgba(244, 241, 234, .68);
+      font-size: 16px;
+      line-height: 1.5;
+      text-align: right;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 18px;
+    }
+    .mock {
+      position: relative;
+      overflow: hidden;
+      height: 480px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 14px;
+      background: #222;
+      box-shadow: 0 20px 70px rgba(0,0,0,.28);
+    }
+    .tag {
+      position: absolute;
+      left: 18px;
+      top: 16px;
+      z-index: 10;
+      display: inline-flex;
+      align-items: center;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.58);
+      color: #fff;
+      font-family: "Cascadia Mono", ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(12px);
+    }
+    .links {
+      position: absolute;
+      z-index: 9;
+      display: flex;
+      gap: 8px;
+    }
+    .link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 84px;
+      height: 36px;
+      padding: 0 13px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .02em;
+    }
+    .mono { font-family: "Cascadia Mono", ui-monospace, monospace; }
+    .serif { font-family: Georgia, "Times New Roman", serif; }
+
+    /* 01 Minimal Card, kept from round one */
+    .m1 {
+      background: #f5f1e9;
+      color: #151515;
+    }
+    .m1 .links { left: 34px; top: 110px; }
+    .m1 .link { background: #151515; color: #f5f1e9; border-radius: 6px; }
+    .m1 h2 { position: absolute; left: 34px; bottom: 142px; margin: 0; font-size: 72px; line-height: .9; letter-spacing: -.05em; }
+    .m1 p { position: absolute; left: 36px; bottom: 48px; width: 285px; margin: 0; color: rgba(0,0,0,.62); font-size: 18px; line-height: 1.45; }
+    .m1 .line { position: absolute; right: 42px; top: 92px; bottom: 48px; width: 1px; background: #151515; }
+    .m1 .side { position: absolute; right: 34px; bottom: 50px; writing-mode: vertical-rl; font-size: 12px; letter-spacing: .24em; }
+
+    /* 02 Editorial index */
+    .m2 {
+      background: #ece7da;
+      color: #171410;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+    .m2::before {
+      content: "";
+      position: absolute; left: 36px; top: 88px; right: 36px; height: 1px; background: #171410;
+      box-shadow: 0 118px 0 rgba(23,20,16,.25), 0 236px 0 rgba(23,20,16,.25);
+    }
+    .m2 h2 { position: absolute; left: 34px; top: 108px; margin: 0; font-size: 56px; line-height: .92; letter-spacing: -.04em; }
+    .m2 .deck { position: absolute; left: 38px; bottom: 72px; width: 230px; color: rgba(23,20,16,.62); font-size: 17px; line-height: 1.45; }
+    .m2 .links { right: 34px; bottom: 72px; flex-direction: column; }
+    .m2 .link { border-radius: 0; border: 1px solid #171410; color: #171410; background: transparent; font-family: Inter, sans-serif; }
+    .m2 .issue { position: absolute; right: 34px; top: 96px; font-family: Inter, sans-serif; font-size: 11px; letter-spacing: .2em; writing-mode: vertical-rl; }
+
+    /* 03 Swiss grid */
+    .m3 {
+      background: #e9e6dd;
+      color: #101010;
+    }
+    .m3::before {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.08) 1px, transparent 1px),
+        linear-gradient(rgba(0,0,0,.08) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .m3 .block { position: absolute; right: 0; top: 0; width: 112px; height: 178px; background: #d63d30; }
+    .m3 .block2 { position: absolute; left: 0; bottom: 0; width: 164px; height: 122px; background: #0c5a46; }
+    .m3 h2 { position: absolute; left: 36px; top: 104px; margin: 0; width: 235px; font-size: 50px; line-height: .92; letter-spacing: -.045em; }
+    .m3 .copy { position: absolute; left: 178px; bottom: 48px; width: 150px; font-size: 14px; line-height: 1.45; }
+    .m3 .links { left: 36px; bottom: 164px; }
+    .m3 .link { border-radius: 0; background: #101010; color: #fff; }
+
+    /* 04 Quiet terminal */
+    .m4 {
+      background: #111614;
+      color: #d7e3db;
+      font-family: "Cascadia Mono", ui-monospace, monospace;
+      border-color: rgba(215, 227, 219, .18);
+    }
+    .m4::before {
+      content: "";
+      position: absolute; inset: 22px; border: 1px solid rgba(215,227,219,.18); border-radius: 8px;
+    }
+    .m4 .terminal { position: absolute; left: 38px; top: 92px; right: 34px; font-size: 15px; line-height: 1.8; }
+    .m4 h2 { margin: 36px 0 0; color: #fff; font-size: 34px; line-height: 1.12; letter-spacing: -.02em; }
+    .m4 .muted { color: rgba(215,227,219,.48); }
+    .m4 .links { left: 38px; bottom: 50px; flex-direction: column; }
+    .m4 .link { justify-content: flex-start; width: 185px; border: 1px solid rgba(215,227,219,.32); background: rgba(255,255,255,.03); color: #d7e3db; border-radius: 6px; }
+
+    /* 05 Document archive */
+    .m5 {
+      background: #d8d0bf;
+      color: #1a1712;
+      font-family: "Cascadia Mono", ui-monospace, monospace;
+    }
+    .m5 .paper {
+      position: absolute; left: 36px; top: 78px; width: 290px; height: 330px;
+      background: #f5f0e4; border: 1px solid rgba(0,0,0,.24); box-shadow: 10px 12px 0 rgba(0,0,0,.1);
+      padding: 46px 28px;
+    }
+    .m5 h2 { margin: 0 0 22px; font-size: 30px; line-height: 1.04; letter-spacing: -.04em; font-family: Inter, sans-serif; }
+    .m5 .row { display: flex; justify-content: space-between; border-top: 1px solid rgba(0,0,0,.22); padding: 10px 0; font-size: 11px; }
+    .m5 .stamp { position: absolute; right: 32px; bottom: 40px; transform: rotate(-8deg); border: 3px solid #8a231d; color: #8a231d; padding: 8px 12px; font-weight: 900; letter-spacing: .12em; }
+    .m5 .links { left: 64px; bottom: 64px; }
+    .m5 .link { border-radius: 4px; background: #1a1712; color: #f5f0e4; }
+
+    /* 06 Darkroom */
+    .m6 {
+      background: #090909;
+      color: #f2eee4;
+      font-family: Inter, sans-serif;
+    }
+    .m6::before {
+      content: "";
+      position: absolute; right: 26px; top: 68px; width: 190px; height: 270px;
+      background:
+        linear-gradient(160deg, transparent 0 35%, rgba(255,255,255,.72) 35% 36%, transparent 36%),
+        linear-gradient(145deg, #2b2b2b, #111);
+      border: 10px solid #f2eee4;
+      filter: grayscale(1);
+    }
+    .m6 h2 { position: absolute; left: 34px; top: 116px; width: 260px; margin: 0; font-size: 54px; line-height: .92; letter-spacing: -.05em; }
+    .m6 .caption { position: absolute; left: 36px; bottom: 118px; width: 230px; color: rgba(242,238,228,.66); font-size: 15px; line-height: 1.55; }
+    .m6 .links { left: 36px; bottom: 50px; }
+    .m6 .link { border: 1px solid #f2eee4; color: #f2eee4; background: transparent; border-radius: 4px; }
+
+    /* 07 Technical notebook */
+    .m7 {
+      background: #f1eee5;
+      color: #191919;
+      font-family: "Cascadia Mono", ui-monospace, monospace;
+    }
+    .m7::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(#ddd6c6 1px, transparent 1px);
+      background-size: 100% 31px;
+      opacity: .62;
+    }
+    .m7 h2 { position: absolute; left: 34px; top: 94px; margin: 0; font-family: Inter, sans-serif; font-size: 46px; line-height: 1; letter-spacing: -.05em; }
+    .m7 .note { position: absolute; left: 38px; top: 228px; width: 280px; font-size: 13px; line-height: 1.65; }
+    .m7 .rule { position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background: #c45345; }
+    .m7 .links { left: 38px; bottom: 48px; }
+    .m7 .link { background: #191919; color: #f1eee5; border-radius: 6px; }
+
+    /* 08 Object catalog */
+    .m8 {
+      background: #e8e3d4;
+      color: #191713;
+      font-family: Inter, sans-serif;
+    }
+    .m8 .card {
+      position: absolute; left: 34px; right: 34px; height: 86px;
+      border: 1px solid rgba(0,0,0,.24); background: rgba(255,255,255,.38);
+      display: flex; align-items: center; padding: 0 20px;
+      font-size: 14px;
+    }
+    .m8 .c1 { top: 96px; }
+    .m8 .c2 { top: 190px; }
+    .m8 .c3 { top: 284px; }
+    .m8 h2 { position: absolute; left: 36px; top: 34px; margin: 0; font-size: 22px; letter-spacing: -.02em; }
+    .m8 .num { margin-right: 18px; color: rgba(25,23,19,.46); font-family: "Cascadia Mono", monospace; }
+    .m8 .links { left: 34px; bottom: 40px; }
+    .m8 .link { border-radius: 999px; background: #191713; color: #e8e3d4; }
+
+    /* 09 Kinetic type */
+    .m9 {
+      background: #f4f0e7;
+      color: #101010;
+      font-family: Inter, sans-serif;
+    }
+    .m9 h2 { position: absolute; left: 28px; top: 88px; margin: 0; font-size: 82px; line-height: .74; letter-spacing: -.075em; }
+    .m9 .ghost { position: absolute; left: 78px; top: 156px; color: transparent; -webkit-text-stroke: 1px rgba(16,16,16,.26); }
+    .m9 .small { position: absolute; right: 30px; top: 114px; width: 124px; font-size: 12px; line-height: 1.5; text-transform: uppercase; letter-spacing: .08em; }
+    .m9 .slash { position: absolute; right: 86px; bottom: 84px; width: 6px; height: 196px; background: #101010; transform: rotate(28deg); }
+    .m9 .links { left: 32px; bottom: 48px; }
+    .m9 .link { background: #101010; color: #f4f0e7; border-radius: 0; }
+
+    /* 10 Personal signal */
+    .m10 {
+      background: #171717;
+      color: #ece7dc;
+      font-family: Inter, sans-serif;
+    }
+    .m10::before {
+      content: "";
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(90deg, rgba(236,231,220,.08) 1px, transparent 1px),
+        linear-gradient(rgba(236,231,220,.08) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle at 50% 42%, #000, transparent 80%);
+    }
+    .m10 .circle {
+      position: absolute; right: 24px; top: 78px; width: 205px; height: 205px;
+      border: 1px solid rgba(236,231,220,.55); border-radius: 50%;
+    }
+    .m10 .circle::after {
+      content: ""; position: absolute; inset: 42px; border: 1px solid rgba(236,231,220,.22); border-radius: 50%;
+    }
+    .m10 h2 { position: absolute; left: 34px; top: 118px; margin: 0; width: 260px; font-size: 48px; line-height: .96; letter-spacing: -.045em; }
+    .m10 .copy { position: absolute; left: 36px; bottom: 114px; width: 230px; color: rgba(236,231,220,.62); font-size: 15px; line-height: 1.5; }
+    .m10 .links { left: 36px; bottom: 48px; }
+    .m10 .link { border: 1px solid rgba(236,231,220,.45); background: rgba(236,231,220,.07); color: #ece7dc; border-radius: 999px; }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <header class="board-head">
+      <h1>Jackie Ye homepage mockup board V2</h1>
+      <div class="hint">Kept the minimal card direction, then added 9 quieter mature personal-site styles. Less cartoon, less SaaS, GitHub and LinkedIn still visible in the first screen.</div>
+    </header>
+
+    <section class="grid">
+      <article class="mock m1">
+        <div class="tag">01 Minimal Card</div>
+        <div class="links"><span class="link">GitHub</span><span class="link">LinkedIn</span></div>
+        <h2>Jackie<br />Ye</h2>
+        <p>Full-stack developer. Small details, clear systems, useful products.</p>
+        <div class="line"></div><div class="side mono">PRIVATE / PERSONAL / DIRECT</div>
+      </article>
+
+      <article class="mock m2">
+        <div class="tag">02 Editorial Index</div>
+        <div class="issue">VOL. 01 / BUILDER</div>
+        <h2>Jackie Ye,<br />software<br />builder.</h2>
+        <div class="deck">A homepage that reads like a personal index, not a pitch deck.</div>
+        <div class="links"><span class="link">GitHub</span><span class="link">LinkedIn</span></div>
+      </article>
+
+      <article class="mock m3">
+        <div class="tag">03 Swiss Grid</div>
+        <div class="block"></div><div class="block2"></div>
+        <h2>Full-stack work with a clear grid.</h2>
+        <div class="copy">systems, product thinking, practical craft</div>
+        <div class="links"><span class="link">GitHub</span><span class="link">LinkedIn</span></div>
+      </article>
+
+      <article class="mock m4">
+        <div class="tag">04 Quiet Terminal</div>
+        <div class="terminal">
+          <div class="muted">$ jackie --profile</div>
+          <h2>builds calm tools for messy ideas.</h2>
+          <div class="muted">api / ui / product / deploy</div>
+        </div>
+        <div class="links"><span class="link">open github</span><span class="link">open linkedin</span></div>
+      </article>
+
+      <article class="mock m5">
+        <div class="tag">05 Document Archive</div>
+        <div class="paper">
+          <h2>Jackie Ye</h2>
+          <div class="row"><span>role</span><span>developer</span></div>
+          <div class="row"><span>focus</span><span>full stack</span></div>
+          <div class="row"><span>mode</span><span>ship</span></div>
+        </div>
+        <div class="stamp">AVAILABLE</div>
+        <div class="links"><span class="link">GitHub</span><span class="link">LinkedIn</span></div>
+      </article>
+
+      <article class="mock m6">
+        <div class="tag">06 Darkroom</div>
+        <h2>Jackie Ye<br />in focus.</h2>
+        <div class="caption">A moody personal homepage with project work treated like a photo essay.</div>
+        <div class="links"><span class="link">GitHub</span><span class="link">LinkedIn</span></div>
+      </article>
+
+      <article class="mock m7">
+        <div class="tag">07 Technical Notebook</div>
+        <div class="rule"></div>
+        <h2>Notes from a builder.</h2>
+        <div class="note">
+          01 listen<br />
+          02 model the system<br />
+          03 prototype the interface<br />
+          04 ship the product
+        </div>
+        <div class="links"><span class="link">GitHub</span><span class="link">LinkedIn</span></div>
+      </article>
+
+      <article class="mock m8">
+        <div class="tag">08 Object Catalog</div>
+        <h2>Jackie Ye / selected modes</h2>
+        <div class="card c1"><span class="num">001</span><strong>Product systems</strong></div>
+        <div class="card c2"><span class="num">002</span><strong>Interfaces</strong></div>
+        <div class="card c3"><span class="num">003</span><strong>Automation</strong></div>
+        <div class="links"><span class="link">GitHub</span><span class="link">LinkedIn</span></div>
+      </article>
+
+      <article class="mock m9">
+        <div class="tag">09 Kinetic Type</div>
+        <h2>Jackie<br /><span class="ghost">Jackie</span>Ye</h2>
+        <div class="small">full-stack developer making products feel understandable</div>
+        <div class="slash"></div>
+        <div class="links"><span class="link">GitHub</span><span class="link">LinkedIn</span></div>
+      </article>
+
+      <article class="mock m10">
+        <div class="tag">10 Personal Signal</div>
+        <div class="circle"></div>
+        <h2>Useful software, tuned by hand.</h2>
+        <div class="copy">A restrained dark homepage with subtle interaction and a strong first impression.</div>
+        <div class="links"><span class="link">GitHub</span><span class="link">LinkedIn</span></div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

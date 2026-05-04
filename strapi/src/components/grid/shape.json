@@ -1,0 +1,53 @@
+{
+  "collectionName": "components_grid_shapes",
+  "info": {
+    "displayName": "Shape",
+    "description": "Decorative background shape for a grid"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "shape": {
+      "type": "enumeration",
+      "enum": ["triangle", "circle", "rectangle"],
+      "default": "triangle",
+      "required": true
+    },
+    "color": {
+      "type": "string",
+      "default": "rgba(53, 47, 42, 0.16)"
+    },
+    "opacity": {
+      "type": "decimal",
+      "min": 0,
+      "max": 1,
+      "default": 1
+    },
+    "width": {
+      "type": "string",
+      "default": "16%"
+    },
+    "height": {
+      "type": "string",
+      "default": "86px"
+    },
+    "x": {
+      "type": "string",
+      "default": "50%"
+    },
+    "y": {
+      "type": "string",
+      "default": "20%"
+    },
+    "rotation": {
+      "type": "decimal",
+      "default": 0
+    },
+    "zIndex": {
+      "type": "integer",
+      "default": 1
+    }
+  }
+}
