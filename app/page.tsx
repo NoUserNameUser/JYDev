@@ -1,4 +1,4 @@
-import { PoezaCanvas } from "@/components/PoezaCanvas";
+import { PoezaCanvas } from "@/features/grid-canvas";
 
 export default function HomePage() {
   return <PoezaCanvas />;

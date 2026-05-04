@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_sections_ctas",
+  "info": {
+    "displayName": "CTA Section",
+    "description": "Call to action block"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "required": true
+    },
+    "body": {
+      "type": "text"
+    },
+    "action": {
+      "type": "component",
+      "component": "shared.link",
+      "required": true
+    },
+    "visible": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}
