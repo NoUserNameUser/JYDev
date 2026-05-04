@@ -20,6 +20,9 @@
     "styled-components": "^6.1.19"
   },
   "devDependencies": {},
+  "overrides": {
+    "@rushstack/node-core-library": ">=5.21.0"
+  },
   "engines": {
     "node": ">=20.0.0 <=24.x.x",
     "npm": ">=9.0.0"
