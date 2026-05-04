@@ -23,3 +23,5 @@ docker-compose*.yml
 coverage
 *.log
 *.tsbuildinfo
+mockups
+next-env.d.ts
