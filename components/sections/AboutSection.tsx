@@ -28,15 +28,16 @@ export function AboutSection({ content }: AboutSectionProps) {
   useEffect(() => {
     const obs = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            obs.unobserve(e.target);
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in");
+            obs.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
     );
+
     sectionRef.current?.querySelectorAll(".rv").forEach((el) => obs.observe(el));
     return () => obs.disconnect();
   }, []);
@@ -46,51 +47,45 @@ export function AboutSection({ content }: AboutSectionProps) {
       <SectionTitle number={content.sectionNumber} title={content.title} />
 
       <div className={styles.aboutGrid}>
-        <div className={`rv ${styles.photoWrap}`}>
-          <div className={styles.photoCard}>
-            <div className={styles.photoPattern} />
-            <div className={styles.photoPlaceholder}>
-              <div className={styles.photoIcon}>
-                <svg className={styles.photoSvg} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c5a24a" strokeWidth="1.2">
-                  <circle cx="12" cy="8" r="4" />
-                  <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                </svg>
-              </div>
-              <div className={styles.photoLabel}>
-                {content.photoLabel}
-              </div>
-            </div>
+        <div className={`rv ${styles.profileBoard}`}>
+          <div className={styles.profileTopline}>
+            <span>{content.badge}</span>
+            <span>Open to thoughtful builds</span>
           </div>
-          <div className={styles.aboutBadge}>
-            {content.badge}
+          <div className={styles.profileMark}>
+            <span>J</span>
+            <span>Y</span>
+          </div>
+          <div className={styles.profileCaption}>{content.photoLabel}</div>
+          <div className={styles.profileStrips} aria-hidden="true">
+            <span />
+            <span />
+            <span />
+            <span />
           </div>
         </div>
 
         <div className={`rv ${styles.aboutCopy}`}>
           <h3 className={styles.aboutHeading}>
             {content.headlinePrefix}
-            <em className={styles.accentText}>{content.headlineHighlight}</em>
+            <em>{content.headlineHighlight}</em>
             {content.headlineSuffix}
           </h3>
 
           {content.paragraphs.map((paragraph) => (
-            <p
-              key={paragraph}
-              className={styles.aboutParagraph}
-            >
+            <p key={paragraph} className={styles.aboutParagraph}>
               {paragraph}
             </p>
           ))}
 
           <div className={styles.valueList}>
-            {content.values.map((v) => (
-              <div
-                key={v.title}
-                className={styles.valueRow}
-              >
-                <div className={styles.valueIcon}>{v.icon}</div>
-                <div className={styles.valueTitle}>{v.title}</div>
-                <div className={styles.valueDescription}>{v.description}</div>
+            {content.values.map((value, index) => (
+              <div key={value.title} className={styles.valueRow}>
+                <div className={styles.valueIcon}>0{index + 1}</div>
+                <div>
+                  <div className={styles.valueTitle}>{value.title}</div>
+                  <div className={styles.valueDescription}>{value.description}</div>
+                </div>
               </div>
             ))}
           </div>

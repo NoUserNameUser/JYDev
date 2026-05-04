@@ -4,20 +4,19 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 32px var(--container-padding-x) 32px var(--container-padding-left);
+  padding: 30px var(--container-padding-x) 34px var(--container-padding-left);
   border-top: 1px solid var(--color-border);
+  background: rgba(16, 18, 20, 0.74);
 }
 
-.text {
+.text,
+.tagline {
   color: var(--color-muted);
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
 
 .tagline {
-  color: rgba(160, 124, 40, 0.5);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
+  color: var(--color-primary);
 }

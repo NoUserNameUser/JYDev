@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_grid_texts",
+  "info": {
+    "displayName": "Text",
+    "description": "Eyebrow, heading, and body copy for a grid panel"
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "heading": {
+      "type": "string"
+    },
+    "body": {
+      "type": "text"
+    }
+  }
+}

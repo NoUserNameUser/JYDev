@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_grid_buttons",
+  "info": {
+    "displayName": "Button",
+    "description": "Call to action button"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "href": {
+      "type": "string",
+      "required": true
+    },
+    "variant": {
+      "type": "enumeration",
+      "enum": ["primary", "secondary", "text"],
+      "default": "primary",
+      "required": true
+    },
+    "openInNewTab": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

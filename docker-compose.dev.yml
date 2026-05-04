@@ -1,4 +1,51 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: portfolio-postgres-dev
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: portfolio
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  strapi:
+    build:
+      context: ./strapi
+      dockerfile: Dockerfile.dev
+    image: portfolio-strapi:dev
+    container_name: portfolio-strapi-dev
+    ports:
+      - "1337:1337"
+    environment:
+      - NODE_ENV=development
+      - HOST=0.0.0.0
+      - PORT=1337
+      - APP_KEYS=dev-app-key-1,dev-app-key-2,dev-app-key-3,dev-app-key-4
+      - API_TOKEN_SALT=dev-api-token-salt
+      - ADMIN_JWT_SECRET=dev-admin-jwt-secret
+      - TRANSFER_TOKEN_SALT=dev-transfer-token-salt
+      - JWT_SECRET=dev-jwt-secret
+      - DATABASE_CLIENT=postgres
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=portfolio
+      - DATABASE_USERNAME=portfolio
+      - DATABASE_PASSWORD=portfolio
+      - DATABASE_SCHEMA=public
+      - DATABASE_SSL=false
+    depends_on:
+      - db
+    volumes:
+      - ./strapi:/opt/app
+      - /opt/app/node_modules
+      - /opt/app/.cache
+      - /opt/app/build
+    command: npm run develop
+
   web:
     build:
       context: .
@@ -12,6 +59,10 @@ services:
       - NEXT_TELEMETRY_DISABLED=1
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
+      - STRAPI_URL=http://strapi:1337
+      - STRAPI_PUBLIC_URL=http://localhost:1337
+    depends_on:
+      - strapi
     volumes:
       # Bind the source, but keep node_modules and .next inside the container
       # so the host OS doesn't clobber platform-specific binaries.
@@ -19,3 +70,6 @@ services:
       - /app/node_modules
       - /app/.next
     command: npm run dev
+
+volumes:
+  postgres-data:
