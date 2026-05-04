@@ -1,5 +1,7 @@
 import type { GridElement, GridKind, GridSection } from "@/types/grid";
 
+import { resolveStrapiMediaUrl } from "./media";
+
 const gridKinds: GridKind[] = ["hero", "image", "text", "index", "quote"];
 
 type StrapiGrid = {
@@ -62,7 +64,7 @@ function toElements(value: unknown): GridElement[] {
         {
           type: "background",
           color: color || undefined,
-          imageSrc: imageSrc || undefined,
+          imageSrc: imageSrc ? resolveStrapiMediaUrl(imageSrc) : undefined,
           imageAlt: toString(row.imageAlt) || undefined,
           imageOpacity: toNumber(row.imageOpacity),
         },
@@ -87,7 +89,7 @@ function toElements(value: unknown): GridElement[] {
       return [
         {
           type: "image",
-          src,
+          src: resolveStrapiMediaUrl(src),
           alt: toString(row.alt) || undefined,
           caption: toString(row.caption) || undefined,
           placement: placement === "inline" ? "inline" : "background",
