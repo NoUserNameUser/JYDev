@@ -1,6 +1,6 @@
 # Jackie Ye Personal Portfolio
 
-Interactive personal homepage built with Next.js App Router, Tailwind CSS, CSS Modules, Strapi, PostgreSQL, and a POEZA-style spatial canvas.
+Interactive personal homepage built with Next.js App Router, Tailwind CSS, CSS Modules, Payload CMS, PostgreSQL, and a POEZA-style spatial canvas.
 
 ## Getting Started
 
@@ -19,19 +19,23 @@ The redesign moves into a high-end editorial spatial navigation system:
 - Strong coffee-brown grid gaps with white editorial panels
 - Momentum, rubberband edge feedback, and wheel-based grid cycling
 - Center-first spiral placement for adding and removing grids
-- Strapi headless CMS backed by PostgreSQL
+- Payload CMS embedded in Next.js and backed by PostgreSQL
 
-## POEZA CMS with Strapi
+## POEZA CMS with Payload
 
-The homepage loads grids through the local read proxy at `GET /api/grids`, which fetches Strapi's `Grid` collection from `STRAPI_URL`. If Strapi is not reachable, it falls back to `content/grids.ts`.
+The homepage loads grids through the local read proxy at `GET /api/grids`, which reads Payload's `grids` collection through the server-only Local API. If the database is not reachable, it falls back to `content/grids.ts`.
 
-CMS admin:
+CMS entry points:
 
 ```text
-http://localhost:1337/admin
+Payload admin:      http://localhost:3000/admin
+Legacy redirect:    http://localhost:3000/cms -> /admin
+Payload REST API:   http://localhost:3000/api
+Payload GraphQL:    http://localhost:3000/graphql
+GraphQL Playground: http://localhost:3000/graphql-playground
 ```
 
-The old in-app grid manager has been replaced by Strapi. The `/cms` page redirects to the Strapi admin panel.
+The old in-app grid manager has been replaced by Payload. Use `/admin` for content editing; `/cms` only exists as a compatibility redirect to `/admin`.
 
 Frontend read endpoint:
 
@@ -39,7 +43,7 @@ Frontend read endpoint:
 GET    /api/grids
 ```
 
-Strapi collection:
+Payload collection:
 
 ```text
 Grid
@@ -62,19 +66,28 @@ center -> top -> top-right -> right -> bottom-right -> bottom -> bottom-left -> 
 PostgreSQL:
 
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 docker compose -f docker-compose.dev.yml up --build
+npm run payload:seed
 ```
 
-On first Strapi launch, create the admin user at `http://localhost:1337/admin`. The Strapi bootstrap seeds the default grid content into PostgreSQL if the `Grid` collection is empty.
+On first Payload launch, create the admin user at `http://localhost:3000/admin`. After the account exists, run `npm run payload:seed` to seed the default grid content into PostgreSQL.
 
 ## Project Structure
 
 ```text
 app/
-  layout.tsx
-  page.tsx
+  (frontend)/
+    layout.tsx
+    page.tsx
+  (payload)/
+    layout.tsx
+    admin/
+    api/
+    graphql/
   globals.css
+  api/
+  cms/
 
 components/
   PoezaCanvas.tsx
@@ -125,7 +138,7 @@ On Windows PowerShell, use `npm.cmd run build` if script execution policy blocks
 
 - Name, tagline, email, and social links: `content/site.ts`
 - Default POEZA grid content: `content/grids.ts`
-- Strapi grid fetcher: `lib/gridCms.ts`
+- Payload grid fetcher: `lib/gridCms.ts`
 - Spiral placement logic: `lib/gridSpiral.ts`
 - Navigation labels: `content/navigation.ts`
 - Visual theme tokens: `styles/tokens.css`
@@ -143,10 +156,12 @@ Development container:
 docker compose -f docker-compose.dev.yml up --build
 ```
 
+The development compose file stores Payload's Postgres data in `payload-postgres-data`.
+
 This starts:
 
 ```text
 Next.js:  http://localhost:3000
-Strapi:   http://localhost:1337/admin
+Payload:  http://localhost:3000/admin
 Postgres: localhost:5432
 ```

@@ -10,43 +10,12 @@ services:
       POSTGRES_USER: portfolio
       POSTGRES_PASSWORD: portfolio
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-
-  strapi:
-    build:
-      context: ./strapi
-      dockerfile: Dockerfile.dev
-    image: portfolio-strapi:dev
-    container_name: portfolio-strapi-dev
-    ports:
-      - "1337:1337"
-    environment:
-      - NODE_ENV=development
-      - HOST=0.0.0.0
-      - PORT=1337
-      - PUBLIC_URL=http://localhost:1337
-      - CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
-      - APP_KEYS=dev-app-key-1,dev-app-key-2,dev-app-key-3,dev-app-key-4
-      - API_TOKEN_SALT=dev-api-token-salt
-      - ADMIN_JWT_SECRET=dev-admin-jwt-secret
-      - TRANSFER_TOKEN_SALT=dev-transfer-token-salt
-      - JWT_SECRET=dev-jwt-secret
-      - DATABASE_CLIENT=postgres
-      - DATABASE_HOST=db
-      - DATABASE_PORT=5432
-      - DATABASE_NAME=portfolio
-      - DATABASE_USERNAME=portfolio
-      - DATABASE_PASSWORD=portfolio
-      - DATABASE_SCHEMA=public
-      - DATABASE_SSL=false
-    depends_on:
-      - db
-    volumes:
-      - ./strapi:/opt/app
-      - /opt/app/node_modules
-      - /opt/app/.cache
-      - /opt/app/build
-    command: npm run develop
+      - payload-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio -d portfolio"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   web:
     build:
@@ -61,21 +30,25 @@ services:
       - NEXT_TELEMETRY_DISABLED=1
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
-      - STRAPI_URL=http://strapi:1337
-      - STRAPI_PUBLIC_URL=http://localhost:1337
       - NEXT_PUBLIC_SITE_URL=http://localhost:3000
-      - NEXT_PUBLIC_STRAPI_URL=http://localhost:1337
+      - DATABASE_URL=postgres://portfolio:portfolio@db:5432/portfolio
+      - PAYLOAD_SECRET=dev-payload-secret-change-me
       - NEXT_REVALIDATE_SECRET=dev-revalidate-secret
-      - STRAPI_WEBHOOK_SECRET=dev-webhook-secret
+      - PAYLOAD_WEBHOOK_SECRET=dev-webhook-secret
+      - CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
     depends_on:
-      - strapi
+      db:
+        condition: service_healthy
     volumes:
       # Bind the source, but keep node_modules and .next inside the container
       # so the host OS doesn't clobber platform-specific binaries.
       - .:/app
-      - /app/node_modules
+      - node-modules:/app/node_modules
       - /app/.next
-    command: npm run dev
+      - payload-media:/app/media
+    command: sh -c "npm install && npm run dev"
 
 volumes:
-  postgres-data:
+  payload-postgres-data:
+  payload-media:
+  node-modules:

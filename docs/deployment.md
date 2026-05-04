@@ -2,28 +2,37 @@
 
 ## Production Docker
 
-1. Copy `.env.production.example` to `.env.production`.
-2. Fill every secret. Production compose intentionally fails when required values are missing.
-3. Start the stack:
+1. Copy `.env.production.example` to `.env`.
+2. Fill every secret. Keep `.env` on the server only.
+3. Validate the environment:
 
 ```bash
-docker compose --env-file .env.production up --build -d
+npm run validate:env
+```
+
+4. Start the stack:
+
+```bash
+docker compose up --build -d
 ```
 
 Services:
 
 - `web`: Next.js standalone server on port `3000`
-- `strapi`: Strapi CMS on port `1337`
 - `db`: PostgreSQL with persistent `postgres-data` volume
+- `payload-media`: durable local uploads volume mounted at `/app/media`
+
+The production compose file intentionally keeps only two runtime services. Put TLS, redirects,
+and domain routing in your platform load balancer or a small external reverse proxy.
 
 ## Revalidation Webhook
 
-Configure a Strapi webhook to call:
+Configure a Payload webhook to call:
 
 ```text
 POST https://example.com/api/revalidate
-Header: x-revalidate-secret: <STRAPI_WEBHOOK_SECRET>
-Body: { "tag": "strapi" }
+Header: x-revalidate-secret: <PAYLOAD_WEBHOOK_SECRET>
+Body: { "tag": "payload" }
 ```
 
 For page-specific updates:
@@ -41,6 +50,6 @@ For page-specific updates:
 ## Operational Checks
 
 - Confirm `/` returns 200 from `web`.
-- Confirm `/_health` returns 204 from Strapi.
-- Confirm uploads are stored in durable object storage before production traffic.
+- Confirm `/admin` loads the Payload admin.
+- Confirm uploads are stored in the `payload-media` volume or durable object storage before production traffic.
 - Confirm `CORS_ORIGINS` only contains trusted frontend origins.
