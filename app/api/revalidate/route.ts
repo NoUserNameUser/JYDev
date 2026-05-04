@@ -14,7 +14,7 @@ function isAllowedPath(path: string) {
 }
 
 export async function POST(request: Request) {
-  if (!env.revalidateSecret && !env.strapiWebhookSecret) {
+  if (!env.revalidateSecret && !env.cmsWebhookSecret) {
     return NextResponse.json({ error: "Revalidation is not configured." }, { status: 500 });
   }
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   }
 
   const secret = request.headers.get("x-revalidate-secret") ?? payload.secret;
-  const validSecrets = [env.revalidateSecret, env.strapiWebhookSecret].filter(Boolean);
+  const validSecrets = [env.revalidateSecret, env.cmsWebhookSecret].filter(Boolean);
   if (!secret || !validSecrets.includes(secret)) {
     return NextResponse.json({ error: "Invalid revalidation secret." }, { status: 401 });
   }
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
   } else if (payload.path && isAllowedPath(payload.path)) {
     revalidatePath(payload.path);
   } else {
-    revalidateTag("strapi");
+    revalidateTag("payload");
   }
 
   return NextResponse.json({ revalidated: true });

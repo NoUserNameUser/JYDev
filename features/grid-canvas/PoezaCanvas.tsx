@@ -212,7 +212,6 @@ export function PoezaCanvas() {
 
     setActiveSection((current) => {
       if (current === closest) return current;
-      window.history.replaceState(null, "", `#${closest}`);
       return closest;
     });
   }, [centerSectionId, sections]);
@@ -275,7 +274,6 @@ export function PoezaCanvas() {
         onUpdate: updateActiveSection,
       });
       setActiveSection(id);
-      window.history.replaceState(null, "", `#${id}`);
     },
     [updateActiveSection, x, y],
   );
@@ -316,6 +314,11 @@ export function PoezaCanvas() {
 
     return () => resizeObserver.disconnect();
   }, [centerSectionId, focusSection, measure, sectionMap]);
+
+  useEffect(() => {
+    if (!activeSection || window.location.hash === `#${activeSection}`) return;
+    window.history.replaceState(null, "", `#${activeSection}`);
+  }, [activeSection]);
 
   useEffect(() => {
     let cancelled = false;

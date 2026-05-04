@@ -1,3 +1,5 @@
+import { withPayload } from "@payloadcms/next/withPayload";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -8,19 +10,19 @@ const nextConfig = {
       {
         protocol: "http",
         hostname: "127.0.0.1",
-        port: "1337",
-        pathname: "/uploads/**",
+        port: "3000",
+        pathname: "/media/**",
       },
       {
         protocol: "http",
         hostname: "localhost",
-        port: "1337",
-        pathname: "/uploads/**",
+        port: "3000",
+        pathname: "/media/**",
       },
       {
         protocol: "https",
         hostname: "**",
-        pathname: "/uploads/**",
+        pathname: "/media/**",
       },
     ],
   },
@@ -42,4 +44,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+export default withPayload(nextConfig);
