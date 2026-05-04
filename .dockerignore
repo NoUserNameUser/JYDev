@@ -20,6 +20,7 @@ README.md
 Dockerfile*
 docker-compose*.yml
 .dockerignore
+media
 coverage
 *.log
 *.tsbuildinfo

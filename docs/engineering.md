@@ -8,7 +8,7 @@ Run before opening a PR:
 npm run lint
 npm run typecheck
 npm run build
-cd strapi && npm run build
+npm run payload:generate
 ```
 
 ## Pull Request Checklist

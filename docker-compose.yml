@@ -1,7 +1,6 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: portfolio-postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
@@ -16,65 +15,31 @@ services:
       retries: 5
       start_period: 20s
 
-  strapi:
-    build:
-      context: ./strapi
-      dockerfile: Dockerfile
-    image: portfolio-strapi:latest
-    container_name: portfolio-strapi
-    restart: unless-stopped
-    ports:
-      - "1337:1337"
-    environment:
-      - NODE_ENV=production
-      - HOST=0.0.0.0
-      - PORT=1337
-      - PUBLIC_URL=${STRAPI_PUBLIC_URL:?STRAPI_PUBLIC_URL is required}
-      - CORS_ORIGINS=${CORS_ORIGINS:?CORS_ORIGINS is required}
-      - APP_KEYS=${STRAPI_APP_KEYS:?STRAPI_APP_KEYS is required}
-      - API_TOKEN_SALT=${STRAPI_API_TOKEN_SALT:?STRAPI_API_TOKEN_SALT is required}
-      - ADMIN_JWT_SECRET=${STRAPI_ADMIN_JWT_SECRET:?STRAPI_ADMIN_JWT_SECRET is required}
-      - TRANSFER_TOKEN_SALT=${STRAPI_TRANSFER_TOKEN_SALT:?STRAPI_TRANSFER_TOKEN_SALT is required}
-      - JWT_SECRET=${STRAPI_JWT_SECRET:?STRAPI_JWT_SECRET is required}
-      - DATABASE_CLIENT=postgres
-      - DATABASE_HOST=db
-      - DATABASE_PORT=5432
-      - DATABASE_NAME=${POSTGRES_DB:?POSTGRES_DB is required}
-      - DATABASE_USERNAME=${POSTGRES_USER:?POSTGRES_USER is required}
-      - DATABASE_PASSWORD=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
-      - DATABASE_SCHEMA=public
-      - DATABASE_SSL=${DATABASE_SSL:-false}
-    depends_on:
-      db:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:1337/_health"]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
   web:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+        DATABASE_URL: ${DATABASE_URL:-postgres://portfolio:portfolio@127.0.0.1:5432/portfolio}
+        PAYLOAD_SECRET: ${PAYLOAD_SECRET:-docker-build-secret}
     image: portfolio:latest
-    container_name: portfolio
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
-      - NEXT_TELEMETRY_DISABLED=1
-      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:?NEXT_PUBLIC_SITE_URL is required}
-      - NEXT_PUBLIC_STRAPI_URL=${STRAPI_PUBLIC_URL:?STRAPI_PUBLIC_URL is required}
-      - STRAPI_URL=http://strapi:1337
-      - STRAPI_PUBLIC_URL=${STRAPI_PUBLIC_URL:?STRAPI_PUBLIC_URL is required}
-      - STRAPI_API_TOKEN=${STRAPI_API_TOKEN:-}
-      - NEXT_REVALIDATE_SECRET=${NEXT_REVALIDATE_SECRET:?NEXT_REVALIDATE_SECRET is required}
-      - STRAPI_WEBHOOK_SECRET=${STRAPI_WEBHOOK_SECRET:?STRAPI_WEBHOOK_SECRET is required}
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: 1
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:?NEXT_PUBLIC_SITE_URL is required}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?PAYLOAD_SECRET is required}
+      NEXT_REVALIDATE_SECRET: ${NEXT_REVALIDATE_SECRET:?NEXT_REVALIDATE_SECRET is required}
+      PAYLOAD_WEBHOOK_SECRET: ${PAYLOAD_WEBHOOK_SECRET:?PAYLOAD_WEBHOOK_SECRET is required}
+      CORS_ORIGINS: ${CORS_ORIGINS:?CORS_ORIGINS is required}
+    volumes:
+      - payload-media:/app/media
     depends_on:
-      strapi:
+      db:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:3000/"]
@@ -85,3 +50,4 @@ services:
 
 volumes:
   postgres-data:
+  payload-media:

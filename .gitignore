@@ -10,10 +10,6 @@ coverage/
 .next/
 out/
 
-# Strapi generated admin artifacts
-strapi/.strapi/
-strapi/.strapi-updater.json
-
 # production
 build/
 deploy/nginx/
