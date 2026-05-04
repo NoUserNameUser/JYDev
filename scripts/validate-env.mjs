@@ -1,18 +1,37 @@
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+
+const envPath = resolve(process.cwd(), ".env");
+
+if (existsSync(envPath)) {
+  const lines = readFileSync(envPath, "utf8").split(/\r?\n/);
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) {
+      continue;
+    }
+
+    const [key, ...valueParts] = trimmed.split("=");
+    const value = valueParts.join("=").replace(/^['"]|['"]$/g, "");
+
+    if (!process.env[key]) {
+      process.env[key] = value;
+    }
+  }
+}
+
 const requiredByTarget = {
   production: [
     "NEXT_PUBLIC_SITE_URL",
-    "NEXT_PUBLIC_STRAPI_URL",
-    "STRAPI_PUBLIC_URL",
+    "DATABASE_URL",
     "POSTGRES_DB",
     "POSTGRES_USER",
     "POSTGRES_PASSWORD",
-    "STRAPI_APP_KEYS",
-    "STRAPI_API_TOKEN_SALT",
-    "STRAPI_ADMIN_JWT_SECRET",
-    "STRAPI_TRANSFER_TOKEN_SALT",
-    "STRAPI_JWT_SECRET",
+    "PAYLOAD_SECRET",
     "NEXT_REVALIDATE_SECRET",
-    "STRAPI_WEBHOOK_SECRET",
+    "PAYLOAD_WEBHOOK_SECRET",
     "CORS_ORIGINS",
   ],
   development: [],
