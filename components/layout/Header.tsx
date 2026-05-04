@@ -26,7 +26,8 @@ export function Header() {
         className={styles.brand}
         aria-label={siteConfig.name}
       >
-        J<span className={styles.brandAccent}>-</span>Y
+        <span className={styles.brandMark}>JY</span>
+        <span className={styles.brandText}>Playground</span>
       </a>
 
       <ul className={`${styles.navList} hidden md:flex`}>

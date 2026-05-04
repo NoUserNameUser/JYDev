@@ -2,16 +2,16 @@ import type { SocialLink } from "@/types/content";
 
 export const siteConfig = {
   name: "Jackie Ye",
-  title: "Jackie Ye - Full Stack Developer",
+  title: "Jackie Ye - Interactive Full Stack Developer",
   description:
-    "Full stack developer building digital products from idea to deployment. Every encounter is meaningful.",
+    "Full stack developer building playful digital products from idea to deployment.",
   url: "https://jackiey.me",
   email: "find.jackie@yahoo.com",
-  logoText: "J-Y",
-  tagline: "Every encounter is meaningful.",
+  logoText: "JY",
+  tagline: "Useful products can still feel playful.",
   chineseTagline: "每一次相遇，都是缘分。",
   social: {
-    github: "https://github.com/NoUserNameUser/JYDev",
+    github: "https://github.com/NoUserNameUser",
     linkedin: "https://www.linkedin.com/in/jackie-ye-77b37b70/",
     resume: "#",
   },

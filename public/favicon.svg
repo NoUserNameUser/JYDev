@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="JY monogram">
+  <rect width="64" height="64" rx="12" fill="#1a1d1f"/>
+  <path d="M11 13h42" stroke="#b99d6b" stroke-width="2" stroke-linecap="round"/>
+  <path d="M11 51h42" stroke="#b99d6b" stroke-width="2" stroke-linecap="round"/>
+  <text x="32" y="43" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="31" font-weight="700" fill="#f4efe7">JY</text>
+</svg>

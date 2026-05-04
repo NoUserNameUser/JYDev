@@ -2,12 +2,12 @@ import type { ActionLink } from "@/types/content";
 
 export const mainNavigation: ActionLink[] = [
   { href: "#about", label: "About" },
-  { href: "#build", label: "Services" },
-  { href: "#experience", label: "Work" },
+  { href: "#build", label: "Build" },
+  { href: "#experience", label: "Process" },
   { href: "#contact", label: "Contact" },
 ];
 
 export const navigationCta: ActionLink = {
-  label: "Let's Connect",
+  label: "Start",
   href: "#contact",
 };

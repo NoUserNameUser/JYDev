@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_grid_backgrounds",
+  "info": {
+    "displayName": "Background",
+    "description": "Grid background color and optional image"
+  },
+  "options": {},
+  "attributes": {
+    "color": {
+      "type": "string",
+      "default": "#ffffff"
+    },
+    "imageSrc": {
+      "type": "string"
+    },
+    "imageAlt": {
+      "type": "string"
+    },
+    "imageOpacity": {
+      "type": "decimal",
+      "min": 0,
+      "max": 1,
+      "default": 0.88
+    }
+  }
+}

@@ -5,11 +5,9 @@ export function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.text}>
-        © 2026 {siteConfig.name} - {siteConfig.tagline}
+        (C) 2026 {siteConfig.name} - {siteConfig.tagline}
       </div>
-      <div className={styles.tagline}>
-        {siteConfig.chineseTagline}
-      </div>
+      <div className={styles.tagline}>{siteConfig.chineseTagline}</div>
     </footer>
   );
 }
