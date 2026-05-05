@@ -209,7 +209,7 @@ const resumeGrids: ResumeGrid[] = [
       },
       {
         type: "text",
-        eyebrow: "Burnaby, BC / 778-881-0548",
+        eyebrow: "Vancouver, BC",
         heading: "Full Stack Developer",
         body: "6+ years architecting scalable web applications, microservices, high-traffic CMS platforms, and DevOps automation.",
       },

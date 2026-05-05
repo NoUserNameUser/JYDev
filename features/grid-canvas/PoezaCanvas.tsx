@@ -305,15 +305,10 @@ export function PoezaCanvas() {
     if (viewportRef.current) resizeObserver.observe(viewportRef.current);
     if (canvasRef.current) resizeObserver.observe(canvasRef.current);
 
-    const hash = window.location.hash.replace("#", "");
-    if (hash && sectionMap.has(hash)) {
-      requestAnimationFrame(() => focusSection(hash));
-    } else {
-      requestAnimationFrame(() => focusSection(centerSectionId));
-    }
+    requestAnimationFrame(() => focusSection(centerSectionId));
 
     return () => resizeObserver.disconnect();
-  }, [centerSectionId, focusSection, measure, sectionMap]);
+  }, [centerSectionId, focusSection, measure]);
 
   useEffect(() => {
     if (!activeSection || window.location.hash === `#${activeSection}`) return;
