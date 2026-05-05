@@ -35,7 +35,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# mockup images (binary blobs — keep .html for reference)
-mockups/*.png
-mockups/*.jpg
-mockups/*.webp
+# local exports
+exports/
