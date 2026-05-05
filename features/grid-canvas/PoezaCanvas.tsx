@@ -6,7 +6,6 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { defaultGridSections } from "@/content/grids";
 import { buildSpiralPositions } from "@/lib/gridSpiral";
 import type { GridElement, GridSection } from "@/types/grid";
 
@@ -150,16 +149,19 @@ export function PoezaCanvas() {
   const bounds = useRef({ minX: 0, maxX: 0, minY: 0, maxY: 0 });
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const [sections, setSections] = useState<GridSection[]>(defaultGridSections);
-  const [activeSection, setActiveSection] = useState(sections[0].id);
+  const [sections, setSections] = useState<GridSection[]>([]);
+  const [activeSection, setActiveSection] = useState("");
   const [isDragging, setIsDragging] = useState(false);
 
-  const centerSectionId = sections[0]?.id ?? defaultGridSections[0].id;
+  const centerSectionId = sections[0]?.id;
   const sectionMap = useMemo(() => new Map(sections.map((section) => [section.id, section])), [sections]);
   const activeGrid = sectionMap.get(activeSection) ?? sections[0];
   const spiralPositions = useMemo(() => buildSpiralPositions(sections.length), [sections.length]);
   const gridRadius = useMemo(
-    () => Math.max(...spiralPositions.map((position) => Math.max(Math.abs(position.col), Math.abs(position.row)))),
+    () =>
+      spiralPositions.length
+        ? Math.max(...spiralPositions.map((position) => Math.max(Math.abs(position.col), Math.abs(position.row))))
+        : 0,
     [spiralPositions],
   );
   const gridOrigin = gridRadius + 2;
@@ -194,7 +196,7 @@ export function PoezaCanvas() {
 
     const centerX = viewport.clientWidth / 2;
     const centerY = viewport.clientHeight / 2;
-    let closest = sections[0]?.id ?? centerSectionId;
+    let closest = sections[0]?.id ?? "";
     let closestDistance = Number.POSITIVE_INFINITY;
 
     for (const section of sections) {
@@ -214,7 +216,7 @@ export function PoezaCanvas() {
       if (current === closest) return current;
       return closest;
     });
-  }, [centerSectionId, sections]);
+  }, [sections]);
 
   const settle = useCallback(
     (velocityX = 0, velocityY = 0) => {
@@ -305,7 +307,7 @@ export function PoezaCanvas() {
     if (viewportRef.current) resizeObserver.observe(viewportRef.current);
     if (canvasRef.current) resizeObserver.observe(canvasRef.current);
 
-    requestAnimationFrame(() => focusSection(centerSectionId));
+    if (centerSectionId) requestAnimationFrame(() => focusSection(centerSectionId));
 
     return () => resizeObserver.disconnect();
   }, [centerSectionId, focusSection, measure]);
@@ -323,14 +325,14 @@ export function PoezaCanvas() {
         const response = await fetch("/api/grids", { cache: "no-store" });
         if (!response.ok) return;
         const data = (await response.json()) as { grids?: GridSection[] };
-        if (!cancelled && data.grids?.length) {
-          const nextSections = [...data.grids].sort((a, b) => a.orderIndex - b.orderIndex);
+        if (!cancelled) {
+          const nextSections = [...(data.grids ?? [])].sort((a, b) => a.orderIndex - b.orderIndex);
           setSections(nextSections);
-          setActiveSection((current) => (nextSections.some((section) => section.id === current) ? current : nextSections[0].id));
+          setActiveSection((current) => (nextSections.some((section) => section.id === current) ? current : (nextSections[0]?.id ?? "")));
           requestAnimationFrame(measure);
         }
       } catch {
-        // Keep the static defaults when the CMS database is not configured.
+        // The CMS is the content source. Without it, the canvas has no grids to render.
       }
     }
 
@@ -404,13 +406,17 @@ export function PoezaCanvas() {
   return (
     <div className={styles.shell}>
       <div className={styles.topbar}>
-        <button className={styles.brand} onClick={() => focusSection(centerSectionId)} aria-label="Go to opening section">
-          {sections[0]?.label ?? "Jackie Ye"}
-        </button>
-        <div className={styles.status}>
-          <span>{activeGrid?.meta}</span>
-          <span>{activeGrid?.label}</span>
-        </div>
+        {centerSectionId ? (
+          <button className={styles.brand} onClick={() => focusSection(centerSectionId)} aria-label="Go to opening section">
+            {sections[0]?.label}
+          </button>
+        ) : null}
+        {activeGrid ? (
+          <div className={styles.status}>
+            <span>{activeGrid.meta}</span>
+            <span>{activeGrid.label}</span>
+          </div>
+        ) : null}
       </div>
 
       <div
@@ -512,18 +518,20 @@ export function PoezaCanvas() {
         </motion.div>
       </div>
 
-      <nav className={styles.rail} aria-label="Canvas sections">
-        {sections.map((section, index) => (
-          <button
-            key={section.id}
-            className={section.id === activeSection ? styles.railActive : ""}
-            onClick={() => focusSection(section.id)}
-            aria-label={`Go to ${section.label}`}
-          >
-            {String(index + 1).padStart(2, "0")}
-          </button>
-        ))}
-      </nav>
+      {sections.length ? (
+        <nav className={styles.rail} aria-label="Canvas sections">
+          {sections.map((section, index) => (
+            <button
+              key={section.id}
+              className={section.id === activeSection ? styles.railActive : ""}
+              onClick={() => focusSection(section.id)}
+              aria-label={`Go to ${section.label}`}
+            >
+              {String(index + 1).padStart(2, "0")}
+            </button>
+          ))}
+        </nav>
+      ) : null}
     </div>
   );
 }
