@@ -91,33 +91,31 @@ app/
   api/
   cms/
 
-components/
-  PoezaCanvas.tsx
-  PoezaCanvas.module.css
-  layout/
-    Header.tsx
-    Footer.tsx
-  sections/
-    HeroSection.tsx
-    AboutSection.tsx
-    ServicesSection.tsx
-    ExperienceSection.tsx
-    ContactSection.tsx
-    PortfolioSections.module.css
-  ui/
-    SectionTitle.tsx
-    Ui.module.css
-
 content/
   grids.ts
   pages/home.ts
-  navigation.ts
   site.ts
   research/personal-homepage-redesign.md
+
+features/
+  grid-canvas/
+    PoezaCanvas.tsx
+    PoezaCanvas.module.css
 
 lib/
   gridCms.ts
   gridSpiral.ts
+  payload/
+    client.ts
+    mappers.ts
+
+payload/
+  scripts/
+    seed.ts
+
+migrations/
+  index.ts
+  *_initial_payload_schema.ts
 
 types/
   grid.ts
@@ -142,9 +140,8 @@ On Windows PowerShell, use `npm.cmd run build` if script execution policy blocks
 - Default POEZA grid content: `content/grids.ts`
 - Payload grid fetcher: `lib/gridCms.ts`
 - Spiral placement logic: `lib/gridSpiral.ts`
-- Navigation labels: `content/navigation.ts`
 - Visual theme tokens: `styles/tokens.css`
-- Main layout and interaction styling: `components/sections/PortfolioSections.module.css`
+- Main canvas interaction styling: `features/grid-canvas/PoezaCanvas.module.css`
 
 ## Docker
 
