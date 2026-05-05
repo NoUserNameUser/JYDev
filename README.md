@@ -73,6 +73,8 @@ npm run payload:seed
 
 On first Payload launch, create the admin user at `http://localhost:3000/admin`. After the account exists, run `npm run payload:seed` to seed the default grid content into PostgreSQL.
 
+Production uses checked-in Payload migrations to create and update PostgreSQL tables automatically on app startup. `PAYLOAD_DB_PUSH` is only useful for local development; leave it `false` in production.
+
 ## Project Structure
 
 ```text
@@ -149,6 +151,8 @@ On Windows PowerShell, use `npm.cmd run build` if script execution policy blocks
 ```bash
 docker compose up --build
 ```
+
+For a fresh production database, the web container runs the bundled Payload migrations when it first connects to Postgres. After `docker compose up -d --build`, visit `/admin` and create the first admin user.
 
 Development container:
 
