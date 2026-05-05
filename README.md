@@ -102,9 +102,6 @@ lib/
     client.ts
     mappers.ts
 
-payload/
-  collections/
-
 migrations/
   index.ts
   *_initial_payload_schema.ts
