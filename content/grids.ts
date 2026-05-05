@@ -12,7 +12,7 @@ type ResumeGrid = {
 };
 
 const linkedinUrl = "https://www.linkedin.com/in/jackie-ye-77b37b70/";
-const githubUrl = "https://github.com/";
+const githubUrl = "https://github.com/NoUserNameUser";
 const emailUrl = "mailto:find.jackie@yahoo.com";
 
 const premiumGridCss = {
