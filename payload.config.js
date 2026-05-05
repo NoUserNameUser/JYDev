@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildConfig } from "payload";
 import sharp from "sharp";
+import { migrations } from "./migrations/index.ts";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -226,6 +227,7 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL,
     },
+    prodMigrations: migrations,
     push: process.env.PAYLOAD_DB_PUSH === "true",
   }),
   editor: lexicalEditor(),
