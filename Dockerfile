@@ -17,11 +17,13 @@ COPY . .
 ARG NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ARG DATABASE_URL=postgres://portfolio:portfolio@127.0.0.1:5432/portfolio
 ARG PAYLOAD_SECRET=docker-build-secret
+ARG NODE_OPTIONS=--max-old-space-size=768
 
 ENV NODE_ENV=production
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV DATABASE_URL=$DATABASE_URL
 ENV PAYLOAD_SECRET=$PAYLOAD_SECRET
+ENV NODE_OPTIONS=$NODE_OPTIONS
 
 RUN mkdir -p public
 RUN npm run build
