@@ -1,4 +1,4 @@
-# Jackie Ye Personal Portfolio
+# Portfolio
 
 Interactive personal homepage built with Next.js App Router, Tailwind CSS, CSS Modules, Payload CMS, PostgreSQL, and a POEZA-style spatial canvas.
 
@@ -23,7 +23,7 @@ The redesign moves into a high-end editorial spatial navigation system:
 
 ## POEZA CMS with Payload
 
-The homepage loads grids through the local read proxy at `GET /api/grids`, which reads Payload's `grids` collection through the server-only Local API. If the database is not reachable, it falls back to `content/grids.ts`.
+The homepage loads grids through the local read proxy at `GET /api/grids`, which reads Payload's `grids` collection through the server-only Local API. Payload is the single content source for grid content; the frontend does not keep fallback portfolio copy.
 
 CMS entry points:
 
@@ -68,10 +68,9 @@ PostgreSQL:
 ```bash
 cp .env.example .env
 docker compose -f docker-compose.dev.yml up --build
-npm run payload:seed
 ```
 
-On first Payload launch, create the admin user at `http://localhost:3000/admin`. After the account exists, run `npm run payload:seed` to seed the default grid content into PostgreSQL.
+On first Payload launch, create the admin user at `http://localhost:3000/admin`, then add grid content in the `Grid` collection.
 
 Production uses checked-in Payload migrations to create and update PostgreSQL tables automatically on app startup. `PAYLOAD_DB_PUSH` is only useful for local development; leave it `false` in production.
 
@@ -91,33 +90,24 @@ app/
   api/
   cms/
 
-components/
-  PoezaCanvas.tsx
-  PoezaCanvas.module.css
-  layout/
-    Header.tsx
-    Footer.tsx
-  sections/
-    HeroSection.tsx
-    AboutSection.tsx
-    ServicesSection.tsx
-    ExperienceSection.tsx
-    ContactSection.tsx
-    PortfolioSections.module.css
-  ui/
-    SectionTitle.tsx
-    Ui.module.css
-
-content/
-  grids.ts
-  pages/home.ts
-  navigation.ts
-  site.ts
-  research/personal-homepage-redesign.md
+features/
+  grid-canvas/
+    PoezaCanvas.tsx
+    PoezaCanvas.module.css
 
 lib/
   gridCms.ts
   gridSpiral.ts
+  payload/
+    client.ts
+    mappers.ts
+
+payload/
+  collections/
+
+migrations/
+  index.ts
+  *_initial_payload_schema.ts
 
 types/
   grid.ts
@@ -138,13 +128,12 @@ On Windows PowerShell, use `npm.cmd run build` if script execution policy blocks
 
 ## Personalization
 
-- Name, tagline, email, and social links: `content/site.ts`
-- Default POEZA grid content: `content/grids.ts`
+- Grid content: Payload `grids` collection in `/admin`
+- Site metadata: `NEXT_PUBLIC_SITE_NAME` and `NEXT_PUBLIC_SITE_DESCRIPTION`
 - Payload grid fetcher: `lib/gridCms.ts`
 - Spiral placement logic: `lib/gridSpiral.ts`
-- Navigation labels: `content/navigation.ts`
 - Visual theme tokens: `styles/tokens.css`
-- Main layout and interaction styling: `components/sections/PortfolioSections.module.css`
+- Main canvas interaction styling: `features/grid-canvas/PoezaCanvas.module.css`
 
 ## Docker
 
