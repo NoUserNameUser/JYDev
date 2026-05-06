@@ -128,7 +128,11 @@ function renderElement(element: GridElement, index: number) {
   );
 }
 
-export function PoezaCanvas() {
+type PoezaCanvasProps = {
+  initialSections?: GridSection[];
+};
+
+export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
@@ -149,8 +153,8 @@ export function PoezaCanvas() {
   const bounds = useRef({ minX: 0, maxX: 0, minY: 0, maxY: 0 });
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const [sections, setSections] = useState<GridSection[]>([]);
-  const [activeSection, setActiveSection] = useState("");
+  const [sections, setSections] = useState<GridSection[]>(initialSections);
+  const [activeSection, setActiveSection] = useState(initialSections[0]?.id ?? "");
   const [isDragging, setIsDragging] = useState(false);
 
   const centerSectionId = sections[0]?.id;
