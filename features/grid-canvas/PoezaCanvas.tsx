@@ -150,6 +150,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
     distance: 0,
   });
   const wheelLock = useRef(false);
+  const activeSectionFrame = useRef<number | null>(null);
   const bounds = useRef({ minX: 0, maxX: 0, minY: 0, maxY: 0 });
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -222,6 +223,14 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
     });
   }, [sections]);
 
+  const scheduleActiveSectionUpdate = useCallback(() => {
+    if (activeSectionFrame.current !== null) return;
+    activeSectionFrame.current = requestAnimationFrame(() => {
+      activeSectionFrame.current = null;
+      updateActiveSection();
+    });
+  }, [updateActiveSection]);
+
   const settle = useCallback(
     (velocityX = 0, velocityY = 0) => {
       const targetX = clamp(x.get() + velocityX * 260, bounds.current.minX, bounds.current.maxX);
@@ -233,7 +242,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
         damping: 20,
         mass: 0.92,
         velocity: velocityX * 1000,
-        onUpdate: updateActiveSection,
+        onUpdate: scheduleActiveSectionUpdate,
       });
       animate(y, targetY, {
         type: "spring",
@@ -241,10 +250,10 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
         damping: 20,
         mass: 0.92,
         velocity: velocityY * 1000,
-        onUpdate: updateActiveSection,
+        onUpdate: scheduleActiveSectionUpdate,
       });
     },
-    [updateActiveSection, x, y],
+    [scheduleActiveSectionUpdate, x, y],
   );
 
   const focusSection = useCallback(
@@ -270,18 +279,18 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
         stiffness: 92,
         damping: 22,
         mass: 0.9,
-        onUpdate: updateActiveSection,
+        onUpdate: scheduleActiveSectionUpdate,
       });
       animate(y, targetY, {
         type: "spring",
         stiffness: 92,
         damping: 22,
         mass: 0.9,
-        onUpdate: updateActiveSection,
+        onUpdate: scheduleActiveSectionUpdate,
       });
       setActiveSection(id);
     },
-    [updateActiveSection, x, y],
+    [scheduleActiveSectionUpdate, x, y],
   );
 
   const moveByWheel = useCallback(
@@ -313,7 +322,13 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
 
     if (centerSectionId) requestAnimationFrame(() => focusSection(centerSectionId));
 
-    return () => resizeObserver.disconnect();
+    return () => {
+      resizeObserver.disconnect();
+      if (activeSectionFrame.current !== null) {
+        cancelAnimationFrame(activeSectionFrame.current);
+        activeSectionFrame.current = null;
+      }
+    };
   }, [centerSectionId, focusSection, measure]);
 
   useEffect(() => {
@@ -388,7 +403,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
     if (distance > 5) setIsDragging(true);
     x.set(nextX);
     y.set(nextY);
-    updateActiveSection();
+    scheduleActiveSectionUpdate();
   };
 
   const onPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
