@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import { buildHomeMetadata } from "@/lib/seo";
+
 import "../globals.css";
 
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_SITE_NAME ?? "Portfolio",
-  description: process.env.NEXT_PUBLIC_SITE_DESCRIPTION ?? "Portfolio site.",
+  ...buildHomeMetadata(),
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
