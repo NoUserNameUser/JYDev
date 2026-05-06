@@ -8,7 +8,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 FROM base AS deps
 COPY package.json package-lock.json* ./
-RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+RUN --mount=type=cache,target=/root/.npm \
+  if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
@@ -26,7 +27,7 @@ ENV PAYLOAD_SECRET=$PAYLOAD_SECRET
 ENV NODE_OPTIONS=$NODE_OPTIONS
 
 RUN mkdir -p public
-RUN npm run build
+RUN --mount=type=cache,target=/app/.next/cache npm run build
 
 FROM base AS runner
 WORKDIR /app

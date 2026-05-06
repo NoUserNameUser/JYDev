@@ -29,6 +29,7 @@ type ShapeStyle = CSSProperties & {
 };
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+const ACTIVE_SECTION_UPDATE_INTERVAL = 120;
 
 const rubberband = (value: number, min: number, max: number) => {
   if (value < min) return min + (value - min) * 0.22;
@@ -151,6 +152,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
   });
   const wheelLock = useRef(false);
   const activeSectionFrame = useRef<number | null>(null);
+  const lastActiveSectionUpdate = useRef(0);
   const bounds = useRef({ minX: 0, maxX: 0, minY: 0, maxY: 0 });
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -225,8 +227,11 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
 
   const scheduleActiveSectionUpdate = useCallback(() => {
     if (activeSectionFrame.current !== null) return;
+    const now = performance.now();
+    if (now - lastActiveSectionUpdate.current < ACTIVE_SECTION_UPDATE_INTERVAL) return;
     activeSectionFrame.current = requestAnimationFrame(() => {
       activeSectionFrame.current = null;
+      lastActiveSectionUpdate.current = performance.now();
       updateActiveSection();
     });
   }, [updateActiveSection]);
