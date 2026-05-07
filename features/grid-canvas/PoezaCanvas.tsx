@@ -92,6 +92,7 @@ function renderElement(element: GridElement, index: number) {
           width={1200}
           height={900}
           sizes="(max-width: 760px) 70vw, 52vw"
+          loading="lazy"
           unoptimized
           draggable={false}
         />
@@ -153,11 +154,17 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
   const wheelLock = useRef(false);
   const activeSectionFrame = useRef<number | null>(null);
   const lastActiveSectionUpdate = useRef(0);
+  const activeSectionRef = useRef(initialSections[0]?.id ?? "");
+  const centerSectionIdRef = useRef(initialSections[0]?.id ?? "");
+  const lazyUnloadTimers = useRef<Record<string, number>>({});
   const bounds = useRef({ minX: 0, maxX: 0, minY: 0, maxY: 0 });
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const [sections, setSections] = useState<GridSection[]>(initialSections);
   const [activeSection, setActiveSection] = useState(initialSections[0]?.id ?? "");
+  const [renderableSectionIds, setRenderableSectionIds] = useState<Set<string>>(
+    () => new Set(initialSections[0]?.id ? [initialSections[0].id] : []),
+  );
   const [isDragging, setIsDragging] = useState(false);
 
   const centerSectionId = sections[0]?.id;
@@ -294,6 +301,10 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
         onUpdate: scheduleActiveSectionUpdate,
       });
       setActiveSection(id);
+      setRenderableSectionIds((current) => {
+        if (current.has(id)) return current;
+        return new Set([...current, id]);
+      });
     },
     [scheduleActiveSectionUpdate, x, y],
   );
@@ -342,6 +353,71 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
   }, [activeSection]);
 
   useEffect(() => {
+    activeSectionRef.current = activeSection;
+    setRenderableSectionIds((current) => {
+      if (!activeSection || current.has(activeSection)) return current;
+      return new Set([...current, activeSection]);
+    });
+  }, [activeSection]);
+
+  useEffect(() => {
+    centerSectionIdRef.current = centerSectionId ?? "";
+  }, [centerSectionId]);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || !sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = (entry.target as HTMLElement).dataset.gridId;
+          if (!id) continue;
+
+          if (entry.isIntersecting) {
+            window.clearTimeout(lazyUnloadTimers.current[id]);
+            delete lazyUnloadTimers.current[id];
+            setRenderableSectionIds((current) => {
+              if (current.has(id)) return current;
+              return new Set([...current, id]);
+            });
+            continue;
+          }
+
+          window.clearTimeout(lazyUnloadTimers.current[id]);
+          lazyUnloadTimers.current[id] = window.setTimeout(() => {
+            if (id === activeSectionRef.current || id === centerSectionIdRef.current) return;
+            setRenderableSectionIds((current) => {
+              if (!current.has(id)) return current;
+              const next = new Set(current);
+              next.delete(id);
+              return next;
+            });
+          }, 900);
+        }
+      },
+      {
+        root: viewport,
+        rootMargin: "140% 140%",
+        threshold: 0,
+      },
+    );
+
+    for (const section of sections) {
+      const node = sectionRefs.current[section.id];
+      if (node) observer.observe(node);
+    }
+
+    return () => {
+      observer.disconnect();
+      for (const timer of Object.values(lazyUnloadTimers.current)) {
+        window.clearTimeout(timer);
+      }
+      lazyUnloadTimers.current = {};
+    };
+  }, [sections]);
+
+  useEffect(() => {
     let cancelled = false;
 
     async function loadSections() {
@@ -353,6 +429,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
           const nextSections = [...(data.grids ?? [])].sort((a, b) => a.orderIndex - b.orderIndex);
           setSections(nextSections);
           setActiveSection((current) => (nextSections.some((section) => section.id === current) ? current : (nextSections[0]?.id ?? "")));
+          setRenderableSectionIds(new Set(nextSections[0]?.id ? [nextSections[0].id] : []));
           requestAnimationFrame(measure);
         }
       } catch {
@@ -388,7 +465,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!gesture.current.active) return;
-    event.preventDefault();
+    if (event.cancelable) event.preventDefault();
 
     const now = performance.now();
     const elapsed = Math.max(16, now - gesture.current.lastTime);
@@ -420,7 +497,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
   };
 
   const onWheel = (event: React.WheelEvent<HTMLDivElement>) => {
-    event.preventDefault();
+    if (event.cancelable) event.preventDefault();
     const dominantDelta =
       Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
     if (Math.abs(dominantDelta) < 12) return;
@@ -491,46 +568,53 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
                   element.type !== "shape" &&
                   !(element.type === "image" && element.placement === "background"),
               ) ?? [];
+              const isRenderable =
+                renderableSectionIds.has(section.id) || section.id === activeSection || section.id === centerSectionId;
 
               return (
             <section
               key={section.id}
               id={toScopeId(section.id)}
+              data-grid-id={section.id}
               data-grid-slug={section.id}
               data-grid-kind={section.kind}
               ref={(node) => {
                 sectionRefs.current[section.id] = node;
               }}
-              className={styles.section}
+              className={`${styles.section} ${isRenderable ? "" : styles.sectionDormant}`}
+              data-grid-loaded={isRenderable ? "true" : "false"}
               style={{
                 "--section-base": backgroundSettings?.color,
                 gridColumn: spiralPositions[index].col + gridOrigin,
                 gridRow: spiralPositions[index].row + gridOrigin,
               } as SectionStyle}
             >
-              {section.localCss ? <style>{`@scope (#${toScopeId(section.id)}) { ${section.localCss} }`}</style> : null}
-              {backgroundImages.map((element, imageIndex) => (
-                <Image
-                  key={`${element.src}-${imageIndex}`}
-                  className={styles.photo}
-                  data-grid-background-media=""
-                  src={element.src}
-                  alt={element.alt ?? ""}
-                  width={1400}
-                  height={1000}
-                  sizes="(max-width: 760px) 90vw, 80vw"
-                  unoptimized
-                  draggable={false}
-                  style={element.opacity === undefined ? undefined : { opacity: element.opacity }}
-                />
-              ))}
-              {shapeElements.map(renderShape)}
+              {isRenderable && section.localCss ? <style>{`@scope (#${toScopeId(section.id)}) { ${section.localCss} }`}</style> : null}
+              {isRenderable
+                ? backgroundImages.map((element, imageIndex) => (
+                    <Image
+                      key={`${element.src}-${imageIndex}`}
+                      className={styles.photo}
+                      data-grid-background-media=""
+                      src={element.src}
+                      alt={element.alt ?? ""}
+                      width={1400}
+                      height={1000}
+                      sizes="(max-width: 760px) 90vw, 80vw"
+                      loading="lazy"
+                      unoptimized
+                      draggable={false}
+                      style={element.opacity === undefined ? undefined : { opacity: element.opacity }}
+                    />
+                  ))
+                : null}
+              {isRenderable ? shapeElements.map(renderShape) : null}
               <div className={styles.sectionHeader} data-grid-header="">
                 <span>{section.label}</span>
                 <span>{section.kicker}</span>
               </div>
               <div className={styles.sectionBody} data-grid-body="">
-                {contentElements.length ? (
+                {isRenderable && contentElements.length ? (
                   <div className={styles.elementStack}>{contentElements.map(renderElement)}</div>
                 ) : null}
               </div>
