@@ -3,7 +3,9 @@ node_modules
 out
 build
 .git
+.github
 .gitignore
+.gitattributes
 .claude
 Portfolio.html
 .env
@@ -17,10 +19,13 @@ yarn-error.log*
 .vscode
 .idea
 README.md
+docs
+*.md
 Dockerfile*
 docker-compose*.yml
 .dockerignore
 media
+exports
 coverage
 *.log
 *.tsbuildinfo

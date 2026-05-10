@@ -28,8 +28,18 @@ type ShapeStyle = CSSProperties & {
   "--shape-rotation": string;
 };
 
+type SectionView = {
+  section: GridSection;
+  col: number;
+  row: number;
+  backgroundSettings?: Extract<GridElement, { type: "background" }>;
+  backgroundImages: Array<{ src: string; alt?: string; opacity?: number }>;
+  shapeElements: Array<Extract<GridElement, { type: "shape" }>>;
+  contentElements: GridElement[];
+};
+
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-const ACTIVE_SECTION_UPDATE_INTERVAL = 120;
+const ACTIVE_SECTION_UPDATE_INTERVAL = 140;
 
 const rubberband = (value: number, min: number, max: number) => {
   if (value < min) return min + (value - min) * 0.22;
@@ -130,6 +140,46 @@ function renderElement(element: GridElement, index: number) {
   );
 }
 
+function buildSectionView(section: GridSection, col: number, row: number): SectionView {
+  const backgroundSettings = section.elements?.find(
+    (element): element is Extract<GridElement, { type: "background" }> => element.type === "background",
+  );
+  const backgroundImageElements =
+    section.elements?.filter(
+      (element): element is Extract<GridElement, { type: "image" }> =>
+        element.type === "image" && element.placement === "background",
+    ) ?? [];
+  const backgroundImages = [
+    ...(backgroundSettings?.imageSrc
+      ? [
+          {
+            src: backgroundSettings.imageSrc,
+            alt: backgroundSettings.imageAlt,
+            opacity: backgroundSettings.imageOpacity,
+          },
+        ]
+      : []),
+    ...backgroundImageElements.map((element) => ({
+      src: element.src,
+      alt: element.alt,
+      opacity: undefined,
+    })),
+  ];
+  const shapeElements =
+    section.elements?.filter(
+      (element): element is Extract<GridElement, { type: "shape" }> => element.type === "shape",
+    ) ?? [];
+  const contentElements =
+    section.elements?.filter(
+      (element) =>
+        element.type !== "background" &&
+        element.type !== "shape" &&
+        !(element.type === "image" && element.placement === "background"),
+    ) ?? [];
+
+  return { section, col, row, backgroundSettings, backgroundImages, shapeElements, contentElements };
+}
+
 type PoezaCanvasProps = {
   initialSections?: GridSection[];
 };
@@ -138,6 +188,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+  const sectionCenters = useRef<Map<string, { cx: number; cy: number }>>(new Map());
   const gesture = useRef({
     active: false,
     startX: 0,
@@ -160,7 +211,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
   const bounds = useRef({ minX: 0, maxX: 0, minY: 0, maxY: 0 });
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const [sections, setSections] = useState<GridSection[]>(initialSections);
+  const sections = initialSections;
   const [activeSection, setActiveSection] = useState(initialSections[0]?.id ?? "");
   const [renderableSectionIds, setRenderableSectionIds] = useState<Set<string>>(
     () => new Set(initialSections[0]?.id ? [initialSections[0].id] : []),
@@ -180,6 +231,27 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
   );
   const gridOrigin = gridRadius + 2;
   const gridSize = gridOrigin * 2 - 1;
+  const sectionViews = useMemo<SectionView[]>(
+    () =>
+      sections.map((section, index) => {
+        const position = spiralPositions[index] ?? { col: 0, row: 0 };
+        return buildSectionView(section, position.col + gridOrigin, position.row + gridOrigin);
+      }),
+    [sections, spiralPositions, gridOrigin],
+  );
+
+  const measureSectionCenters = useCallback(() => {
+    const centers = sectionCenters.current;
+    centers.clear();
+    for (const section of sections) {
+      const node = sectionRefs.current[section.id];
+      if (!node) continue;
+      centers.set(section.id, {
+        cx: node.offsetLeft + node.offsetWidth / 2,
+        cy: node.offsetTop + node.offsetHeight / 2,
+      });
+    }
+  }, [sections]);
 
   const measure = useCallback(() => {
     const viewport = viewportRef.current;
@@ -202,35 +274,39 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
       x.set(clamp(x.get(), minX, padding));
       y.set(clamp(y.get(), minY, padding));
     }
-  }, [x, y]);
+
+    measureSectionCenters();
+  }, [measureSectionCenters, x, y]);
 
   const updateActiveSection = useCallback(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
+    const centers = sectionCenters.current;
+    if (centers.size === 0) {
+      measureSectionCenters();
+      if (sectionCenters.current.size === 0) return;
+    }
 
-    const centerX = viewport.clientWidth / 2;
-    const centerY = viewport.clientHeight / 2;
+    const targetX = viewport.clientWidth / 2 - x.get();
+    const targetY = viewport.clientHeight / 2 - y.get();
+
     let closest = sections[0]?.id ?? "";
     let closestDistance = Number.POSITIVE_INFINITY;
 
-    for (const section of sections) {
-      const node = sectionRefs.current[section.id];
-      if (!node) continue;
-      const rect = node.getBoundingClientRect();
-      const dx = rect.left + rect.width / 2 - centerX;
-      const dy = rect.top + rect.height / 2 - centerY;
-      const distance = Math.hypot(dx, dy);
+    for (const [id, center] of sectionCenters.current) {
+      const dx = center.cx - targetX;
+      const dy = center.cy - targetY;
+      const distance = dx * dx + dy * dy;
       if (distance < closestDistance) {
         closestDistance = distance;
-        closest = section.id;
+        closest = id;
       }
     }
 
-    setActiveSection((current) => {
-      if (current === closest) return current;
-      return closest;
-    });
-  }, [sections]);
+    if (closest === activeSectionRef.current) return;
+    activeSectionRef.current = closest;
+    setActiveSection(closest);
+  }, [measureSectionCenters, sections, x, y]);
 
   const scheduleActiveSectionUpdate = useCallback(() => {
     if (activeSectionFrame.current !== null) return;
@@ -239,6 +315,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
     activeSectionFrame.current = requestAnimationFrame(() => {
       activeSectionFrame.current = null;
       lastActiveSectionUpdate.current = performance.now();
+      if (gesture.current.active) return;
       updateActiveSection();
     });
   }, [updateActiveSection]);
@@ -300,6 +377,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
         mass: 0.9,
         onUpdate: scheduleActiveSectionUpdate,
       });
+      activeSectionRef.current = id;
       setActiveSection(id);
       setRenderableSectionIds((current) => {
         if (current.has(id)) return current;
@@ -417,32 +495,6 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
     };
   }, [sections]);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadSections() {
-      try {
-        const response = await fetch("/api/grids", { cache: "no-store" });
-        if (!response.ok) return;
-        const data = (await response.json()) as { grids?: GridSection[] };
-        if (!cancelled) {
-          const nextSections = [...(data.grids ?? [])].sort((a, b) => a.orderIndex - b.orderIndex);
-          setSections(nextSections);
-          setActiveSection((current) => (nextSections.some((section) => section.id === current) ? current : (nextSections[0]?.id ?? "")));
-          setRenderableSectionIds(new Set(nextSections[0]?.id ? [nextSections[0].id] : []));
-          requestAnimationFrame(measure);
-        }
-      } catch {
-        // The CMS is the content source. Without it, the canvas has no grids to render.
-      }
-    }
-
-    loadSections();
-    return () => {
-      cancelled = true;
-    };
-  }, [measure]);
-
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0 && event.pointerType === "mouse") return;
     x.stop();
@@ -482,10 +534,9 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
     gesture.current.lastTime = now;
     gesture.current.distance = distance;
 
-    if (distance > 5) setIsDragging(true);
+    if (distance > 5 && !isDragging) setIsDragging(true);
     x.set(nextX);
     y.set(nextY);
-    scheduleActiveSectionUpdate();
   };
 
   const onPointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -493,6 +544,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
     event.currentTarget.releasePointerCapture(event.pointerId);
     gesture.current.active = false;
     settle(gesture.current.velocityX, gesture.current.velocityY);
+    updateActiveSection();
     window.setTimeout(() => setIsDragging(false), 80);
   };
 
@@ -534,95 +586,62 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
           className={styles.canvas}
           style={{ x, y, "--grid-size": gridSize } as CanvasStyle}
         >
-          {sections.map((section, index) => (
-            (() => {
-              const backgroundSettings = section.elements?.find(
-                (element): element is Extract<GridElement, { type: "background" }> => element.type === "background",
-              );
-              const backgroundImageElements = section.elements?.filter(
-                (element): element is Extract<GridElement, { type: "image" }> =>
-                  element.type === "image" && element.placement === "background",
-              ) ?? [];
-              const backgroundImages = [
-                ...(backgroundSettings?.imageSrc
-                  ? [
-                      {
-                        src: backgroundSettings.imageSrc,
-                        alt: backgroundSettings.imageAlt,
-                        opacity: backgroundSettings.imageOpacity,
-                      },
-                    ]
-                  : []),
-                ...backgroundImageElements.map((element) => ({
-                  src: element.src,
-                  alt: element.alt,
-                  opacity: undefined,
-                })),
-              ];
-              const shapeElements = section.elements?.filter(
-                (element): element is Extract<GridElement, { type: "shape" }> => element.type === "shape",
-              ) ?? [];
-              const contentElements = section.elements?.filter(
-                (element) =>
-                  element.type !== "background" &&
-                  element.type !== "shape" &&
-                  !(element.type === "image" && element.placement === "background"),
-              ) ?? [];
-              const isRenderable =
-                renderableSectionIds.has(section.id) || section.id === activeSection || section.id === centerSectionId;
+          {sectionViews.map((view) => {
+            const { section, col, row, backgroundSettings, backgroundImages, shapeElements, contentElements } = view;
+            const isRenderable =
+              renderableSectionIds.has(section.id) || section.id === activeSection || section.id === centerSectionId;
 
-              return (
-            <section
-              key={section.id}
-              id={toScopeId(section.id)}
-              data-grid-id={section.id}
-              data-grid-slug={section.id}
-              data-grid-kind={section.kind}
-              ref={(node) => {
-                sectionRefs.current[section.id] = node;
-              }}
-              className={`${styles.section} ${isRenderable ? "" : styles.sectionDormant}`}
-              data-grid-loaded={isRenderable ? "true" : "false"}
-              style={{
-                "--section-base": backgroundSettings?.color,
-                gridColumn: spiralPositions[index].col + gridOrigin,
-                gridRow: spiralPositions[index].row + gridOrigin,
-              } as SectionStyle}
-            >
-              {isRenderable && section.localCss ? <style>{`@scope (#${toScopeId(section.id)}) { ${section.localCss} }`}</style> : null}
-              {isRenderable
-                ? backgroundImages.map((element, imageIndex) => (
-                    <Image
-                      key={`${element.src}-${imageIndex}`}
-                      className={styles.photo}
-                      data-grid-background-media=""
-                      src={element.src}
-                      alt={element.alt ?? ""}
-                      width={1400}
-                      height={1000}
-                      sizes="(max-width: 760px) 90vw, 80vw"
-                      loading="lazy"
-                      unoptimized
-                      draggable={false}
-                      style={element.opacity === undefined ? undefined : { opacity: element.opacity }}
-                    />
-                  ))
-                : null}
-              {isRenderable ? shapeElements.map(renderShape) : null}
-              <div className={styles.sectionHeader} data-grid-header="">
-                <span>{section.label}</span>
-                <span>{section.kicker}</span>
-              </div>
-              <div className={styles.sectionBody} data-grid-body="">
-                {isRenderable && contentElements.length ? (
-                  <div className={styles.elementStack}>{contentElements.map(renderElement)}</div>
-                ) : null}
-              </div>
-              <div className={styles.sectionMeta} data-grid-meta="">{section.meta}</div>
-            </section>
-              );
-            })()
-          ))}
+            return (
+              <section
+                key={section.id}
+                id={toScopeId(section.id)}
+                data-grid-id={section.id}
+                data-grid-slug={section.id}
+                data-grid-kind={section.kind}
+                ref={(node) => {
+                  sectionRefs.current[section.id] = node;
+                }}
+                className={`${styles.section} ${isRenderable ? "" : styles.sectionDormant}`}
+                data-grid-loaded={isRenderable ? "true" : "false"}
+                style={{
+                  "--section-base": backgroundSettings?.color,
+                  gridColumn: col,
+                  gridRow: row,
+                } as SectionStyle}
+              >
+                {isRenderable && section.localCss ? <style>{`@scope (#${toScopeId(section.id)}) { ${section.localCss} }`}</style> : null}
+                {isRenderable
+                  ? backgroundImages.map((element, imageIndex) => (
+                      <Image
+                        key={`${element.src}-${imageIndex}`}
+                        className={styles.photo}
+                        data-grid-background-media=""
+                        src={element.src}
+                        alt={element.alt ?? ""}
+                        width={1400}
+                        height={1000}
+                        sizes="(max-width: 760px) 90vw, 80vw"
+                        loading="lazy"
+                        unoptimized
+                        draggable={false}
+                        style={element.opacity === undefined ? undefined : { opacity: element.opacity }}
+                      />
+                    ))
+                  : null}
+                {isRenderable ? shapeElements.map(renderShape) : null}
+                <div className={styles.sectionHeader} data-grid-header="">
+                  <span>{section.label}</span>
+                  <span>{section.kicker}</span>
+                </div>
+                <div className={styles.sectionBody} data-grid-body="">
+                  {isRenderable && contentElements.length ? (
+                    <div className={styles.elementStack}>{contentElements.map(renderElement)}</div>
+                  ) : null}
+                </div>
+                <div className={styles.sectionMeta} data-grid-meta="">{section.meta}</div>
+              </section>
+            );
+          })}
         </motion.div>
       </div>
 
