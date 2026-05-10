@@ -4,7 +4,7 @@ import { PoezaCanvas } from "@/features/grid-canvas";
 import { listGridSections } from "@/lib/gridCms";
 import { buildHomeMetadata, buildHomeStructuredData, getGlobalSettings } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getGlobalSettings();

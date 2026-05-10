@@ -27,7 +27,9 @@ ENV PAYLOAD_SECRET=$PAYLOAD_SECRET
 ENV NODE_OPTIONS=$NODE_OPTIONS
 
 RUN mkdir -p public
-RUN --mount=type=cache,target=/app/.next/cache npm run build
+RUN --mount=type=cache,target=/app/.next/cache \
+    --mount=type=cache,target=/root/.npm \
+    npm run build
 
 FROM base AS runner
 WORKDIR /app

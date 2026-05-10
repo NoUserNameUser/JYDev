@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { listGridSections } from "@/lib/gridCms";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export async function GET() {
   try {
