@@ -300,7 +300,6 @@
   background: var(--shape-color);
   pointer-events: none;
   transform: translate(-50%, -50%) rotate(var(--shape-rotation));
-  filter: blur(0.2px);
 }
 
 .elementShape[data-grid-shape="triangle"] {
@@ -350,7 +349,12 @@
   padding: 0 22px;
   border: 1px solid rgba(17, 24, 39, 0.24);
   border-radius: 4px;
-  backdrop-filter: blur(14px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .viewport:not(.dragging) .elementButton {
+    backdrop-filter: blur(14px);
+  }
 }
 
 .elementButtonPrimary {
