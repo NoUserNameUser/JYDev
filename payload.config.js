@@ -5,6 +5,11 @@ import { fileURLToPath } from "node:url";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 import { migrations } from "./migrations/index.ts";
+import { revalidateHome } from "./lib/revalidate.ts";
+
+const revalidateHomeHook = () => {
+  revalidateHome();
+};
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -162,6 +167,10 @@ const Grids = {
   access: { create: authenticatedOnly, read: publicRead, update: authenticatedOnly, delete: authenticatedOnly },
   admin: { useAsTitle: "label", defaultColumns: ["label", "kind", "orderIndex", "updatedAt"], group: "Content" },
   defaultSort: "orderIndex",
+  hooks: {
+    afterChange: [revalidateHomeHook],
+    afterDelete: [revalidateHomeHook],
+  },
   fields: [
     { name: "label", type: "text", required: true },
     { name: "kicker", type: "text", required: true },
@@ -190,6 +199,9 @@ const GlobalSettings = {
   slug: "global-settings",
   access: { read: publicRead, update: authenticatedOnly },
   admin: { group: "Settings" },
+  hooks: {
+    afterChange: [revalidateHomeHook],
+  },
   fields: [
     { name: "siteName", type: "text", required: true },
     { name: "siteUrl", type: "text", required: true },
@@ -202,6 +214,9 @@ const Navigation = {
   slug: "navigation",
   access: { read: publicRead, update: authenticatedOnly },
   admin: { group: "Settings" },
+  hooks: {
+    afterChange: [revalidateHomeHook],
+  },
   fields: [
     { name: "items", type: "array", fields: linkFields },
     { name: "cta", type: "group", fields: linkFields },
