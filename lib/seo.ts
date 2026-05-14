@@ -5,10 +5,27 @@ import { getPayloadClient } from "@/lib/payload/client";
 import type { GlobalSetting, Media } from "@/payload-types";
 import type { GridSection } from "@/types/grid";
 
-const FALLBACK_SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "Portfolio";
+const FALLBACK_SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "Jackie Ye";
 const FALLBACK_SITE_URL = "http://localhost:3000";
 const FALLBACK_DESCRIPTION =
-  process.env.NEXT_PUBLIC_SITE_DESCRIPTION ?? "Portfolio site.";
+  process.env.NEXT_PUBLIC_SITE_DESCRIPTION ??
+  "DRE-focused full-stack engineer with 6+ years owning Rogers/Cityfone systems, Dockerized automation, CI/CD strategy, observability, CMS optimization, and cloud reliability.";
+const DRE_KEYWORDS = [
+  "Development Release Engineering",
+  "DRE",
+  "Full Stack Engineer",
+  "Docker",
+  "Docker Compose",
+  "CI/CD",
+  "Observability",
+  "CMS optimization",
+  "Rogers Communications",
+  "Cityfone",
+  "Java Spring Boot",
+  "Python",
+  "AWS",
+  "Linux",
+];
 
 function trimTrailingSlash(value: string) {
   return value.replace(/\/+$/, "");
@@ -55,6 +72,7 @@ export function buildHomeMetadata(settings?: GlobalSetting | null): Metadata {
     metadataBase: new URL(siteUrl),
     title,
     description,
+    keywords: DRE_KEYWORDS,
     applicationName: settings?.siteName || FALLBACK_SITE_NAME,
     alternates: {
       canonical,

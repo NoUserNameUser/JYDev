@@ -74,6 +74,14 @@ On first Payload launch, create the admin user at `http://localhost:3000/admin`,
 
 Production uses checked-in Payload migrations to create and update PostgreSQL tables automatically on app startup. `PAYLOAD_DB_PUSH` is only useful for local development; leave it `false` in production.
 
+To seed the production database with the DRE-positioned portfolio content, run the seed job after the production services are built and the database is healthy:
+
+```bash
+docker compose --profile seed run --rm seed
+```
+
+The seed job uses the same `DATABASE_URL`, `PAYLOAD_SECRET`, and site URL values as the production app, writes through Payload's Local API, and is safe to rerun because grids are upserted by `orderIndex`.
+
 ## Project Structure
 
 ```text
@@ -139,6 +147,12 @@ docker compose up --build
 ```
 
 For a fresh production database, the web container runs the bundled Payload migrations when it first connects to Postgres. After `docker compose up -d --build`, visit `/admin` and create the first admin user.
+
+To seed the checked-in DRE portfolio content into production:
+
+```bash
+docker compose --profile seed run --rm seed
+```
 
 Development container:
 

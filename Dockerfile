@@ -31,6 +31,15 @@ RUN --mount=type=cache,target=/app/.next/cache \
     --mount=type=cache,target=/root/.npm \
     npm run build
 
+FROM base AS seed
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+CMD ["npm", "run", "content:dre"]
+
 FROM base AS runner
 WORKDIR /app
 
