@@ -6,11 +6,20 @@ import type { GlobalSetting, Media } from "@/payload-types";
 import type { GridSection } from "@/types/grid";
 
 const FALLBACK_SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "Jackie Ye";
+const FALLBACK_TITLE = "Jackie Ye | Freelance Full-Stack Developer";
 const FALLBACK_SITE_URL = "http://localhost:3000";
 const FALLBACK_DESCRIPTION =
   process.env.NEXT_PUBLIC_SITE_DESCRIPTION ??
-  "DRE-focused full-stack engineer with 6+ years owning Rogers/Cityfone systems, Dockerized automation, CI/CD strategy, observability, CMS optimization, and cloud reliability.";
+  "Jackie Ye is a freelance full-stack developer building modern web apps, Dockerized automation, CMS platforms, CI/CD workflows, and reliable cloud systems.";
 const DRE_KEYWORDS = [
+  "Jackie Ye",
+  "Jackie Ye freelancer",
+  "freelancer",
+  "freelance full-stack developer",
+  "full-stack developer",
+  "full stack developer",
+  "web developer",
+  "software developer",
   "Development Release Engineering",
   "DRE",
   "Full Stack Engineer",
@@ -57,13 +66,13 @@ export async function getGlobalSettings(): Promise<GlobalSetting | null> {
 }
 
 export function getSiteUrl(settings?: GlobalSetting | null) {
-  return trimTrailingSlash(settings?.siteUrl || env.siteUrl || FALLBACK_SITE_URL);
+  return trimTrailingSlash(env.siteUrl || settings?.siteUrl || FALLBACK_SITE_URL);
 }
 
 export function buildHomeMetadata(settings?: GlobalSetting | null): Metadata {
   const siteUrl = getSiteUrl(settings);
   const seo = settings?.defaultSeo;
-  const title = seo?.metaTitle || seo?.ogTitle || settings?.siteName || FALLBACK_SITE_NAME;
+  const title = seo?.metaTitle || seo?.ogTitle || FALLBACK_TITLE;
   const description = seo?.metaDescription || seo?.ogDescription || FALLBACK_DESCRIPTION;
   const canonical = seo?.canonicalURL ? absoluteUrl(seo.canonicalURL, siteUrl) : siteUrl;
   const ogImage = mediaUrl(seo?.ogImage, siteUrl) || absoluteUrl("/images/poeza-collection.png", siteUrl);
