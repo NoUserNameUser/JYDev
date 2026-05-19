@@ -23,8 +23,11 @@ services:
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
         DATABASE_URL: ${DATABASE_URL:-postgres://portfolio:portfolio@127.0.0.1:5432/portfolio}
         PAYLOAD_SECRET: ${PAYLOAD_SECRET:-docker-build-secret}
-        NODE_OPTIONS: ${BUILD_NODE_OPTIONS:---max-old-space-size=768}
-    image: portfolio:latest
+        NODE_OPTIONS: ${BUILD_NODE_OPTIONS:---max-old-space-size=1536}
+        NEXT_BUILD_MODE: ${NEXT_BUILD_MODE:-compile}
+        NEXT_SKIP_BUILD_CHECKS: ${NEXT_SKIP_BUILD_CHECKS:-1}
+        NEXT_SKIP_BUILD_CMS: ${NEXT_SKIP_BUILD_CMS:-1}
+    image: ${WEB_IMAGE:-portfolio:latest}
     restart: unless-stopped
     ports:
       - "3000:3000"

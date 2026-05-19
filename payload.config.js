@@ -1,5 +1,4 @@
 import { postgresAdapter } from "@payloadcms/db-postgres";
-import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildConfig } from "payload";
@@ -88,57 +87,6 @@ const gridElementBlocks = [
   },
 ];
 
-const pageSectionBlocks = [
-  {
-    slug: "hero",
-    fields: [
-      { name: "eyebrow", type: "text" },
-      { name: "heading", type: "text", required: true },
-      { name: "body", type: "textarea" },
-      { name: "image", type: "upload", relationTo: "media" },
-      { name: "primaryAction", type: "group", fields: linkFields },
-      { name: "secondaryAction", type: "group", fields: linkFields },
-      { name: "visible", type: "checkbox", defaultValue: true },
-    ],
-  },
-  {
-    slug: "textImage",
-    fields: [
-      { name: "eyebrow", type: "text" },
-      { name: "heading", type: "text", required: true },
-      { name: "body", type: "richText" },
-      { name: "image", type: "upload", relationTo: "media" },
-      { name: "imagePosition", type: "select", defaultValue: "right", options: ["left", "right"] },
-      { name: "visible", type: "checkbox", defaultValue: true },
-    ],
-  },
-  {
-    slug: "cta",
-    fields: [
-      { name: "heading", type: "text", required: true },
-      { name: "body", type: "textarea" },
-      { name: "action", type: "group", fields: linkFields },
-      { name: "visible", type: "checkbox", defaultValue: true },
-    ],
-  },
-  {
-    slug: "faq",
-    fields: [
-      { name: "heading", type: "text", defaultValue: "FAQ" },
-      {
-        name: "items",
-        type: "array",
-        required: true,
-        fields: [
-          { name: "question", type: "text", required: true },
-          { name: "answer", type: "textarea", required: true },
-        ],
-      },
-      { name: "visible", type: "checkbox", defaultValue: true },
-    ],
-  },
-];
-
 const Users = {
   slug: "users",
   auth: true,
@@ -182,19 +130,6 @@ const Grids = {
   ],
 };
 
-const Pages = {
-  slug: "pages",
-  versions: { drafts: true },
-  access: { create: authenticatedOnly, read: publicRead, update: authenticatedOnly, delete: authenticatedOnly },
-  admin: { useAsTitle: "title", defaultColumns: ["title", "slug", "updatedAt"], group: "Content" },
-  fields: [
-    { name: "title", type: "text", required: true },
-    { name: "slug", type: "text", required: true, unique: true, index: true },
-    { name: "seo", type: "group", fields: seoFields },
-    { name: "sections", type: "blocks", blocks: pageSectionBlocks },
-  ],
-};
-
 const GlobalSettings = {
   slug: "global-settings",
   access: { read: publicRead, update: authenticatedOnly },
@@ -235,7 +170,7 @@ export default buildConfig({
       importMapFile: path.resolve(dirname, "app/(payload)/admin/importMap.js"),
     },
   },
-  collections: [Users, Media, Grids, Pages],
+  collections: [Users, Media, Grids],
   cors: corsOrigins?.length ? corsOrigins : [process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"],
   csrf: corsOrigins?.length ? corsOrigins : [process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"],
   db: postgresAdapter({
@@ -245,10 +180,9 @@ export default buildConfig({
     prodMigrations: migrations,
     push: process.env.PAYLOAD_DB_PUSH === "true",
   }),
-  editor: lexicalEditor(),
   globals: [GlobalSettings, Navigation],
   graphQL: {
-    disablePlaygroundInProduction: true,
+    disable: true,
   },
   secret: process.env.PAYLOAD_SECRET ?? "",
   serverURL: process.env.NEXT_PUBLIC_SITE_URL,

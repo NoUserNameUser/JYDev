@@ -2,7 +2,11 @@ import { getPayloadClient } from "@/lib/payload/client";
 import { mapPayloadGrid } from "@/lib/payload/mappers";
 import type { GridSection } from "@/types/grid";
 
+const SKIP_BUILD_CMS = process.env.NEXT_SKIP_BUILD_CMS === "1";
+
 export async function listGridSections(): Promise<GridSection[]> {
+  if (SKIP_BUILD_CMS) return [];
+
   const payload = await getPayloadClient();
   const result = await payload.find({
     collection: "grids",

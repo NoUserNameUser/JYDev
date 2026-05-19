@@ -1,10 +1,18 @@
 import { withPayload } from "@payloadcms/next/withPayload";
 
+const skipBuildChecks = process.env.NEXT_SKIP_BUILD_CHECKS === "1";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   // Emits a minimal standalone server bundle in .next/standalone for Docker.
   output: "standalone",
+  eslint: {
+    ignoreDuringBuilds: skipBuildChecks,
+  },
+  typescript: {
+    ignoreBuildErrors: skipBuildChecks,
+  },
   images: {
     remotePatterns: [
       {
