@@ -31,8 +31,6 @@ CMS entry points:
 Payload admin:      http://localhost:3000/admin
 Legacy redirect:    http://localhost:3000/cms -> /admin
 Payload REST API:   http://localhost:3000/api
-Payload GraphQL:    http://localhost:3000/graphql
-GraphQL Playground: http://localhost:3000/graphql-playground
 ```
 
 The old in-app grid manager has been replaced by Payload. Use `/admin` for content editing; `/cms` only exists as a compatibility redirect to `/admin`.
@@ -93,7 +91,6 @@ app/
     layout.tsx
     admin/
     api/
-    graphql/
   globals.css
   api/
   cms/

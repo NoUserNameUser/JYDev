@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { getGlobalSettings, getSiteUrl } from "@/lib/seo";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const settings = await getGlobalSettings();
@@ -17,7 +17,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       : {
           userAgent: "*",
           allow: "/",
-          disallow: ["/admin", "/api", "/cms", "/graphql", "/graphql-playground"],
+          disallow: ["/admin", "/api", "/cms"],
         },
     sitemap: `${siteUrl}/sitemap.xml`,
     host: siteUrl,

@@ -5,6 +5,7 @@ import { getPayloadClient } from "@/lib/payload/client";
 import type { GlobalSetting, Media } from "@/payload-types";
 import type { GridSection } from "@/types/grid";
 
+const SKIP_BUILD_CMS = process.env.NEXT_SKIP_BUILD_CMS === "1";
 const FALLBACK_SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "Jackie Ye";
 const FALLBACK_TITLE = "Jackie Ye | Freelance Full-Stack Developer";
 const FALLBACK_SITE_URL = "http://localhost:3000";
@@ -53,6 +54,8 @@ function mediaUrl(media: unknown, siteUrl: string) {
 }
 
 export async function getGlobalSettings(): Promise<GlobalSetting | null> {
+  if (SKIP_BUILD_CMS) return null;
+
   try {
     const payload = await getPayloadClient();
     return await payload.findGlobal({

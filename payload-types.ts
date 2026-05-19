@@ -70,7 +70,6 @@ export interface Config {
     users: User;
     media: Media;
     grids: Grid;
-    pages: Page;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -81,7 +80,6 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     grids: GridsSelect<false> | GridsSelect<true>;
-    pages: PagesSelect<false> | PagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -276,110 +274,6 @@ export interface Grid {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pages".
- */
-export interface Page {
-  id: number;
-  title: string;
-  slug: string;
-  seo?: {
-    metaTitle?: string | null;
-    metaDescription?: string | null;
-    canonicalURL?: string | null;
-    ogTitle?: string | null;
-    ogDescription?: string | null;
-    ogImage?: (number | null) | Media;
-    noIndex?: boolean | null;
-    structuredData?:
-      | {
-          [k: string]: unknown;
-        }
-      | unknown[]
-      | string
-      | number
-      | boolean
-      | null;
-  };
-  sections?:
-    | (
-        | {
-            eyebrow?: string | null;
-            heading: string;
-            body?: string | null;
-            image?: (number | null) | Media;
-            primaryAction: {
-              label: string;
-              href: string;
-              openInNewTab?: boolean | null;
-            };
-            secondaryAction: {
-              label: string;
-              href: string;
-              openInNewTab?: boolean | null;
-            };
-            visible?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'hero';
-          }
-        | {
-            eyebrow?: string | null;
-            heading: string;
-            body?: {
-              root: {
-                type: string;
-                children: {
-                  type: any;
-                  version: number;
-                  [k: string]: unknown;
-                }[];
-                direction: ('ltr' | 'rtl') | null;
-                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                indent: number;
-                version: number;
-              };
-              [k: string]: unknown;
-            } | null;
-            image?: (number | null) | Media;
-            imagePosition?: ('left' | 'right') | null;
-            visible?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'textImage';
-          }
-        | {
-            heading: string;
-            body?: string | null;
-            action: {
-              label: string;
-              href: string;
-              openInNewTab?: boolean | null;
-            };
-            visible?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'cta';
-          }
-        | {
-            heading?: string | null;
-            items: {
-              question: string;
-              answer: string;
-              id?: string | null;
-            }[];
-            visible?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'faq';
-          }
-      )[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -413,10 +307,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'grids';
         value: number | Grid;
-      } | null)
-    | ({
-        relationTo: 'pages';
-        value: number | Page;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -615,101 +505,6 @@ export interface GridsSelect<T extends boolean = true> {
   orderIndex?: T;
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pages_select".
- */
-export interface PagesSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  seo?:
-    | T
-    | {
-        metaTitle?: T;
-        metaDescription?: T;
-        canonicalURL?: T;
-        ogTitle?: T;
-        ogDescription?: T;
-        ogImage?: T;
-        noIndex?: T;
-        structuredData?: T;
-      };
-  sections?:
-    | T
-    | {
-        hero?:
-          | T
-          | {
-              eyebrow?: T;
-              heading?: T;
-              body?: T;
-              image?: T;
-              primaryAction?:
-                | T
-                | {
-                    label?: T;
-                    href?: T;
-                    openInNewTab?: T;
-                  };
-              secondaryAction?:
-                | T
-                | {
-                    label?: T;
-                    href?: T;
-                    openInNewTab?: T;
-                  };
-              visible?: T;
-              id?: T;
-              blockName?: T;
-            };
-        textImage?:
-          | T
-          | {
-              eyebrow?: T;
-              heading?: T;
-              body?: T;
-              image?: T;
-              imagePosition?: T;
-              visible?: T;
-              id?: T;
-              blockName?: T;
-            };
-        cta?:
-          | T
-          | {
-              heading?: T;
-              body?: T;
-              action?:
-                | T
-                | {
-                    label?: T;
-                    href?: T;
-                    openInNewTab?: T;
-                  };
-              visible?: T;
-              id?: T;
-              blockName?: T;
-            };
-        faq?:
-          | T
-          | {
-              heading?: T;
-              items?:
-                | T
-                | {
-                    question?: T;
-                    answer?: T;
-                    id?: T;
-                  };
-              visible?: T;
-              id?: T;
-              blockName?: T;
-            };
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
