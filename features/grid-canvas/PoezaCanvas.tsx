@@ -3,7 +3,7 @@
 import { animate, motion, useMotionValue } from "framer-motion";
 import type { MotionStyle } from "framer-motion";
 import Image from "next/image";
-import type { CSSProperties } from "react";
+import type { CSSProperties, MouseEvent } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { buildSpiralPositions } from "@/lib/gridSpiral";
@@ -40,6 +40,9 @@ type SectionView = {
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const ACTIVE_SECTION_UPDATE_INTERVAL = 140;
+const PROTECTED_CONTACT_HREF = "contact:jackie";
+const CONTACT_LOCAL_CODES = [102, 105, 110, 100, 46, 106, 97, 99, 107, 105, 101];
+const CONTACT_DOMAIN_CODES = [121, 97, 104, 111, 111, 46, 99, 111, 109];
 
 const rubberband = (value: number, min: number, max: number) => {
   if (value < min) return min + (value - min) * 0.22;
@@ -53,6 +56,21 @@ function toScopeId(id: string) {
 
 function externalLinkProps(openInNewTab?: boolean) {
   return openInNewTab ? { target: "_blank", rel: "noreferrer" } : {};
+}
+
+function isProtectedContactHref(href: string) {
+  return href === PROTECTED_CONTACT_HREF;
+}
+
+function buildProtectedMailto() {
+  const local = String.fromCharCode(...CONTACT_LOCAL_CODES);
+  const domain = String.fromCharCode(...CONTACT_DOMAIN_CODES);
+  return `mailto:${local}@${domain}`;
+}
+
+function protectedContactClick(event: MouseEvent<HTMLAnchorElement>) {
+  event.preventDefault();
+  window.location.href = buildProtectedMailto();
 }
 
 function renderShape(element: Extract<GridElement, { type: "shape" }>, index: number) {
@@ -112,28 +130,34 @@ function renderElement(element: GridElement, index: number) {
   }
 
   if (element.type === "link") {
+    const isProtectedContact = isProtectedContactHref(element.href);
+
     return (
       <a
         key={index}
         className={styles.elementLink}
         data-grid-element="link"
-        href={element.href}
+        href={isProtectedContact ? "#contact" : element.href}
+        onClick={isProtectedContact ? protectedContactClick : undefined}
         onPointerDown={(event) => event.stopPropagation()}
-        {...externalLinkProps(element.openInNewTab)}
+        {...(isProtectedContact ? {} : externalLinkProps(element.openInNewTab))}
       >
         {element.label}
       </a>
     );
   }
 
+  const isProtectedContact = isProtectedContactHref(element.href);
+
   return (
     <a
       key={index}
       className={`${styles.elementButton} ${styles[`elementButton${element.variant === "secondary" ? "Secondary" : element.variant === "text" ? "Text" : "Primary"}`]}`}
       data-grid-element="button"
-      href={element.href}
+      href={isProtectedContact ? "#contact" : element.href}
+      onClick={isProtectedContact ? protectedContactClick : undefined}
       onPointerDown={(event) => event.stopPropagation()}
-      {...externalLinkProps(element.openInNewTab)}
+      {...(isProtectedContact ? {} : externalLinkProps(element.openInNewTab))}
     >
       {element.label}
     </a>

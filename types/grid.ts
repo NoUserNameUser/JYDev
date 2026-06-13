@@ -1,5 +1,7 @@
 export type GridKind = "hero" | "image" | "text" | "index" | "quote";
 
+export type ProtectedContactHref = "contact:jackie";
+
 export type GridElement =
   | {
       type: "background";
@@ -24,13 +26,13 @@ export type GridElement =
   | {
       type: "link";
       label: string;
-      href: string;
+      href: string | ProtectedContactHref;
       openInNewTab?: boolean;
     }
   | {
       type: "button";
       label: string;
-      href: string;
+      href: string | ProtectedContactHref;
       variant?: "primary" | "secondary" | "text";
       openInNewTab?: boolean;
     }

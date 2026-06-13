@@ -11,7 +11,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 const sharedContact = {
   label: "Email Jackie",
-  href: "mailto:find.jackie@yahoo.com",
+  href: "contact:jackie",
   openInNewTab: false,
 };
 
@@ -55,8 +55,8 @@ const comfortCardCss = `
 const grids: GridSeed[] = [
   {
     label: "Jackie Ye",
-    kicker: "DRE / Full-Stack Engineer / 01",
-    meta: "Release-ready systems",
+    kicker: "Software Development Engineer / 01",
+    meta: "Backend systems + automation",
     kind: "hero",
     orderIndex: 0,
     localCss: `
@@ -98,7 +98,7 @@ const grids: GridSeed[] = [
       },
       {
         blockType: "shape",
-        name: "Release orbit",
+        name: "Systems orbit",
         shape: "circle",
         color: "rgba(214, 80, 61, 0.18)",
         width: "220px",
@@ -110,9 +110,9 @@ const grids: GridSeed[] = [
       {
         blockType: "text",
         eyebrow: "Burnaby, BC",
-        heading: "Release Engineer",
+        heading: "Software Development Engineer",
         body:
-          "DRE-focused full-stack engineer with 6+ years owning Rogers/Cityfone systems for 100K+ monthly users. Strongest work: Dockerized automation, CI/CD strategy, observability, CMS optimization, and cloud reliability.",
+          "Software engineer with 8+ years building, operating, and scaling production systems for telecom users. Former sole technical owner of the Cityfone/Rogers consumer platform, supporting 100K+ users across account workflows, cloud migration, deployment strategy, reliability, and performance optimization.",
       },
       { blockType: "button", ...sharedContact, variant: "primary" },
       { blockType: "link", ...linkedIn },
@@ -121,7 +121,7 @@ const grids: GridSeed[] = [
   },
   {
     label: "Rogers / Cityfone",
-    kicker: "Primary developer + technical owner / 02",
+    kicker: "Sole technical owner / 02",
     meta: "Aug 2017 - 2025",
     kind: "quote",
     orderIndex: 1,
@@ -158,7 +158,7 @@ ${comfortCardCss}
         eyebrow: "Business-critical ownership",
         heading: "Platform Ownership",
         body:
-          "Technical owner for Cityfone at Rogers Communications, spanning CMS platforms, internal CRM, online orders, self-serve portal flows, IVR payment updates, production troubleshooting, and 99.9% uptime expectations.",
+          "Sole developer-owner for Cityfone at Rogers Communications, spanning the consumer platform, internal CRM, online orders, self-service account portal flows, production support, and 99.9% uptime after the AWS EC2 migration.",
       },
       { blockType: "button", label: "Contact", href: sharedContact.href, variant: "secondary", openInNewTab: false },
     ],
@@ -166,7 +166,7 @@ ${comfortCardCss}
   {
     label: "CMS Performance",
     kicker: "ExpressionEngine / WordPress / Drupal / 03",
-    meta: "30% faster",
+    meta: "5s to 2s",
     kind: "index",
     orderIndex: 2,
     localCss: `
@@ -198,15 +198,15 @@ ${comfortCardCss}
         eyebrow: "CMS architecture + optimization",
         heading: "CMS Speed",
         body:
-          "Reworked CMS data structures around reusable elements, bridged CMS data into CRM workflows, and reduced website load time by 30% across high-traffic customer surfaces.",
+          "Re-modeled the CMS data layer around reusable components, supported 5 brands on one shared codebase with independent theming, and cut page load time by about 60% from 5s to 2s.",
       },
       { blockType: "button", label: "LinkedIn proof", href: linkedIn.href, variant: "primary", openInNewTab: true },
     ],
   },
   {
     label: "Release Ops",
-    kicker: "AWS / Docker / CI-CD / 04",
-    meta: "Autoscaling + rollback",
+    kicker: "AWS EC2 / Docker / CI-CD / 04",
+    meta: "Cloud + rollback",
     kind: "image",
     orderIndex: 3,
     localCss: `
@@ -242,7 +242,7 @@ ${comfortCardCss}
         eyebrow: "Infrastructure + release reliability",
         heading: "Release Discipline",
         body:
-          "Moved on-prem services toward AWS with autoscaling, designed CI/CD strategy, patched Linux/Apache/Nginx servers with rollback coverage, and used Docker/Docker Compose to standardize deployment and automation workflows.",
+          "Led the on-premise to AWS EC2 migration behind an Akamai load balancer, designed deployment strategy, patched Linux/Apache/Nginx servers with rollback coverage, and used Docker/Docker Compose to standardize deployment and automation workflows.",
       },
     ],
   },
@@ -321,7 +321,7 @@ ${comfortCardCss}
         eyebrow: "Full-stack delivery",
         heading: "Order Systems",
         body:
-          "Designed and implemented CRM bridges for CMS data, web order receiving and processing, online order systems, self-serve portal workflows, multi-site branding, and IVR payment-info updates.",
+          "Designed and shipped My Assistant, a self-service account portal for payments, number port-in, and account changes, growing peak concurrent traffic from hundreds to thousands.",
       },
       {
         blockType: "button",
@@ -439,8 +439,8 @@ ${comfortCardCss}
     ],
   },
   {
-    label: "DRE Stack",
-    kicker: "Languages / DevOps / CMS / 09",
+    label: "SDE Stack",
+    kicker: "Backend / Cloud / Automation / 09",
     meta: "Toolbox",
     kind: "text",
     orderIndex: 8,
@@ -459,10 +459,10 @@ ${comfortCardCss}
       { blockType: "background", color: "#f7f4ed" },
       {
         blockType: "text",
-        eyebrow: "Python / Java / Docker / CI-CD",
-        heading: "DRE Toolbox",
+        eyebrow: "Python / JavaScript / Docker / APIs",
+        heading: "SDE Toolbox",
         body:
-          "Languages & frameworks: Python, Java Spring Boot, PHP, JavaScript, HTML5, CSS3, MySQL, XML, JSON.\nInfrastructure & DevOps: Docker, Docker Compose, CI/CD pipelines, Linux/Shell scripting, AWS, Apache, Nginx, Git.\nCMS & integrations: ExpressionEngine, WordPress, Drupal, REST APIs, SOAP, Stripe.",
+          "Languages: Python, JavaScript, PHP, SQL, Bash, Java exposure, HTML/CSS.\nBackend & cloud: REST APIs, SOAP APIs, server-side architecture, AWS EC2, Akamai Load Balancer, Docker, Docker Compose, Nginx, Apache, Linux, CI/CD.\nData & tools: MySQL, PostgreSQL, query optimization, Git, GitLab, Jira, Agile/Scrum, production support, rollback planning.",
       },
     ],
   },
@@ -548,13 +548,13 @@ async function main() {
       siteName: "Jackie Ye",
       siteUrl,
       defaultSeo: {
-        metaTitle: "Jackie Ye | DRE & Full-Stack Engineer",
+        metaTitle: "Jackie Ye | Software Development Engineer",
         metaDescription:
-          "DRE-focused full-stack engineer with 6+ years owning Rogers/Cityfone systems, Dockerized automation, CI/CD strategy, observability, CMS optimization, and cloud reliability.",
+          "Software engineer with 8+ years building telecom production systems, backend workflows, cloud infrastructure, automation, and reliable user-facing platforms.",
         canonicalURL: siteUrl,
-        ogTitle: "Jackie Ye | DRE & Full-Stack Engineer",
+        ogTitle: "Jackie Ye | Software Development Engineer",
         ogDescription:
-          "Rogers/Cityfone technical owner focused on Docker, CI/CD, observability, CMS performance, and release-ready full-stack systems.",
+          "Former Cityfone/Rogers sole technical owner focused on backend systems, AWS EC2, Docker, Linux, APIs, CI/CD, performance, and production reliability.",
         structuredData: {
           "@context": "https://schema.org",
           "@graph": [
@@ -564,26 +564,30 @@ async function main() {
               name: "Jackie Ye",
               url: siteUrl,
               description:
-                "Portfolio for Jackie Ye, a DRE-focused full-stack engineer in Burnaby, BC.",
+                "Portfolio for Jackie Ye, a software development engineer in Burnaby, BC.",
             },
             {
               "@type": "Person",
               "@id": `${siteUrl}/#person`,
               name: "Jackie Ye",
               url: siteUrl,
-              jobTitle: "DRE-focused Full-Stack Engineer",
-              email: "find.jackie@yahoo.com",
+              jobTitle: "Software Development Engineer",
               sameAs: [linkedIn.href, github.href],
               knowsAbout: [
-                "Development Release Engineering",
+                "Backend systems",
+                "Cloud infrastructure",
+                "Automation",
                 "Docker",
                 "Docker Compose",
                 "CI/CD",
-                "Observability",
+                "Production reliability",
                 "CMS optimization",
-                "Java Spring Boot",
                 "Python",
-                "AWS",
+                "JavaScript",
+                "PHP",
+                "SQL",
+                "AWS EC2",
+                "Linux",
                 "Rogers Communications",
                 "Cityfone",
               ],
@@ -599,7 +603,7 @@ async function main() {
     await upsertGrid(payload, grid);
   }
 
-  console.log(`Updated ${grids.length} DRE-positioned grids and global SEO settings.`);
+  console.log(`Updated ${grids.length} SDE-positioned grids and global SEO settings.`);
   process.exit(0);
 }
 

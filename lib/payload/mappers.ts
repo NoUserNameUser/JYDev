@@ -2,6 +2,9 @@ import type { GridElement, GridKind, GridSection } from "@/types/grid";
 import type { CMSMedia } from "@/types/media";
 
 const gridKinds: GridKind[] = ["hero", "image", "text", "index", "quote"];
+const protectedContactHref = "contact:jackie";
+const legacyContactLocalCodes = [102, 105, 110, 100, 46, 106, 97, 99, 107, 105, 101];
+const legacyContactDomainCodes = [121, 97, 104, 111, 111, 46, 99, 111, 109];
 
 type RawRecord = Record<string, unknown>;
 
@@ -29,6 +32,14 @@ function toSlug(value: string, fallback: string) {
     .replace(/^-+|-+$/g, "");
 
   return slug || fallback;
+}
+
+function toHref(value: unknown) {
+  const href = toString(value);
+  const legacyContactHref = `mailto:${String.fromCharCode(...legacyContactLocalCodes)}@${String.fromCharCode(
+    ...legacyContactDomainCodes,
+  )}`;
+  return href === legacyContactHref ? protectedContactHref : href;
 }
 
 function sanitizeScopedCss(value: string) {
@@ -91,14 +102,14 @@ function toElements(value: unknown): GridElement[] {
 
     if (blockType === "link") {
       const label = toString(row.label);
-      const href = toString(row.href);
+      const href = toHref(row.href);
       if (!label || !href) return [];
       return [{ type: "link", label, href, openInNewTab: toBoolean(row.openInNewTab) }];
     }
 
     if (blockType === "button") {
       const label = toString(row.label);
-      const href = toString(row.href);
+      const href = toHref(row.href);
       const variant = toString(row.variant);
       if (!label || !href) return [];
       return [

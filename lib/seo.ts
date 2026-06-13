@@ -7,22 +7,23 @@ import type { GridSection } from "@/types/grid";
 
 const SKIP_BUILD_CMS = process.env.NEXT_SKIP_BUILD_CMS === "1";
 const FALLBACK_SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "Jackie Ye";
-const FALLBACK_TITLE = "Jackie Ye | Freelance Full-Stack Developer";
+const FALLBACK_TITLE = "Jackie Ye | Software Development Engineer";
 const FALLBACK_SITE_URL = "http://localhost:3000";
 const FALLBACK_DESCRIPTION =
   process.env.NEXT_PUBLIC_SITE_DESCRIPTION ??
-  "Jackie Ye is a freelance full-stack developer building modern web apps, Dockerized automation, CMS platforms, CI/CD workflows, and reliable cloud systems.";
+  "Jackie Ye is a software development engineer focused on backend systems, cloud infrastructure, automation, and production ownership for telecom-scale platforms.";
 const DRE_KEYWORDS = [
   "Jackie Ye",
-  "Jackie Ye freelancer",
-  "freelancer",
-  "freelance full-stack developer",
+  "software development engineer",
+  "backend systems",
+  "cloud infrastructure",
+  "automation",
   "full-stack developer",
   "full stack developer",
   "web developer",
   "software developer",
-  "Development Release Engineering",
-  "DRE",
+  "production systems",
+  "telecom software",
   "Full Stack Engineer",
   "Docker",
   "Docker Compose",
@@ -138,6 +139,18 @@ function collectKeywords(sections: GridSection[]) {
   return Array.from(words).slice(0, 12);
 }
 
+function stripStructuredDataEmail(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(stripStructuredDataEmail);
+
+  if (!value || typeof value !== "object") return value;
+
+  return Object.fromEntries(
+    Object.entries(value).flatMap(([key, entry]) =>
+      key.toLowerCase() === "email" ? [] : [[key, stripStructuredDataEmail(entry)]],
+    ),
+  );
+}
+
 export function buildHomeStructuredData(settings: GlobalSetting | null, sections: GridSection[]) {
   const siteUrl = getSiteUrl(settings);
   const siteName = settings?.siteName || FALLBACK_SITE_NAME;
@@ -145,7 +158,7 @@ export function buildHomeStructuredData(settings: GlobalSetting | null, sections
   const configuredData = settings?.defaultSeo?.structuredData;
 
   if (configuredData && typeof configuredData === "object") {
-    return configuredData;
+    return stripStructuredDataEmail(configuredData);
   }
 
   return {
