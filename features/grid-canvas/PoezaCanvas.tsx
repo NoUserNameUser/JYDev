@@ -68,9 +68,10 @@ function buildProtectedMailto() {
   return `mailto:${local}@${domain}`;
 }
 
-function protectedContactClick(event: MouseEvent<HTMLAnchorElement>) {
+function protectedContactClick(event: MouseEvent<HTMLAnchorElement>, href: string | null) {
+  if (href) return;
   event.preventDefault();
-  window.location.href = buildProtectedMailto();
+  window.location.assign(buildProtectedMailto());
 }
 
 function renderShape(element: Extract<GridElement, { type: "shape" }>, index: number) {
@@ -97,7 +98,7 @@ function renderShape(element: Extract<GridElement, { type: "shape" }>, index: nu
   );
 }
 
-function renderElement(element: GridElement, index: number) {
+function renderElement(element: GridElement, index: number, protectedContactHref: string | null) {
   if (element.type === "background" || element.type === "shape") return null;
 
   if (element.type === "text") {
@@ -137,8 +138,8 @@ function renderElement(element: GridElement, index: number) {
         key={index}
         className={styles.elementLink}
         data-grid-element="link"
-        href={isProtectedContact ? "#contact" : element.href}
-        onClick={isProtectedContact ? protectedContactClick : undefined}
+        href={isProtectedContact ? protectedContactHref ?? "#contact" : element.href}
+        onClick={isProtectedContact ? (event) => protectedContactClick(event, protectedContactHref) : undefined}
         onPointerDown={(event) => event.stopPropagation()}
         {...(isProtectedContact ? {} : externalLinkProps(element.openInNewTab))}
       >
@@ -154,8 +155,8 @@ function renderElement(element: GridElement, index: number) {
       key={index}
       className={`${styles.elementButton} ${styles[`elementButton${element.variant === "secondary" ? "Secondary" : element.variant === "text" ? "Text" : "Primary"}`]}`}
       data-grid-element="button"
-      href={isProtectedContact ? "#contact" : element.href}
-      onClick={isProtectedContact ? protectedContactClick : undefined}
+      href={isProtectedContact ? protectedContactHref ?? "#contact" : element.href}
+      onClick={isProtectedContact ? (event) => protectedContactClick(event, protectedContactHref) : undefined}
       onPointerDown={(event) => event.stopPropagation()}
       {...(isProtectedContact ? {} : externalLinkProps(element.openInNewTab))}
     >
@@ -237,6 +238,7 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
   const y = useMotionValue(0);
   const sections = initialSections;
   const [activeSection, setActiveSection] = useState(initialSections[0]?.id ?? "");
+  const [protectedContactHref, setProtectedContactHref] = useState<string | null>(null);
   const [renderableSectionIds, setRenderableSectionIds] = useState<Set<string>>(
     () => new Set(initialSections[0]?.id ? [initialSections[0].id] : []),
   );
@@ -467,6 +469,10 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
   }, [centerSectionId]);
 
   useEffect(() => {
+    setProtectedContactHref(buildProtectedMailto());
+  }, []);
+
+  useEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport || !sections.length) return;
 
@@ -659,7 +665,9 @@ export function PoezaCanvas({ initialSections = [] }: PoezaCanvasProps) {
                 </div>
                 <div className={styles.sectionBody} data-grid-body="">
                   {isRenderable && contentElements.length ? (
-                    <div className={styles.elementStack}>{contentElements.map(renderElement)}</div>
+                    <div className={styles.elementStack}>
+                      {contentElements.map((element, index) => renderElement(element, index, protectedContactHref))}
+                    </div>
                   ) : null}
                 </div>
                 <div className={styles.sectionMeta} data-grid-meta="">{section.meta}</div>
