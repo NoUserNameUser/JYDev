@@ -550,6 +550,45 @@
   font-weight: 800;
 }
 
+.section[data-grid-slug="jackie-ye"] .sectionBody {
+  width: min(680px, 74%);
+  padding-block: 48px;
+}
+
+.section[data-grid-slug="jackie-ye"] .elementStack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  align-items: center;
+  justify-content: center;
+}
+
+.section[data-grid-slug="jackie-ye"] .elementText {
+  flex: 1 0 100%;
+  max-width: 620px;
+  gap: 8px;
+}
+
+.section[data-grid-slug="jackie-ye"] .elementEyebrow {
+  font-size: 0.56rem;
+}
+
+.section[data-grid-slug="jackie-ye"] .elementText h2 {
+  font-size: 3rem;
+  line-height: 0.96;
+}
+
+.section[data-grid-slug="jackie-ye"] .elementText p {
+  max-width: 590px;
+  font-size: 0.82rem;
+  line-height: 1.52;
+}
+
+.section[data-grid-slug="jackie-ye"] .elementButton {
+  min-height: 40px;
+  padding-inline: 18px;
+}
+
 .section[data-grid-kind="quote"] .sectionBody,
 .section[data-grid-slug="cloud-devops"] .sectionBody,
 .section[data-grid-slug="commerce-crm"] .sectionBody,
@@ -691,6 +730,30 @@
 
   .elementText h2 {
     font-size: clamp(1.85rem, 9vw, 3.4rem);
+  }
+
+  .section[data-grid-slug="jackie-ye"] .sectionBody {
+    width: 82%;
+    padding-block: 50px;
+  }
+
+  .section[data-grid-slug="jackie-ye"] .elementStack {
+    gap: 8px 10px;
+  }
+
+  .section[data-grid-slug="jackie-ye"] .elementText h2 {
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .section[data-grid-slug="jackie-ye"] .elementText p {
+    font-size: 0.74rem;
+    line-height: 1.44;
+  }
+
+  .section[data-grid-slug="jackie-ye"] .elementLink,
+  .section[data-grid-slug="jackie-ye"] .elementButton {
+    font-size: 0.62rem;
   }
 
   .section[data-grid-slug] .elementShape {
