@@ -1,4 +1,7 @@
-import type { SpiralPosition } from "@/types/grid";
+export type SpiralPosition = {
+  col: number;
+  row: number;
+};
 
 export function buildSpiralPositions(count: number): SpiralPosition[] {
   const positions: SpiralPosition[] = [{ col: 0, row: 0 }];

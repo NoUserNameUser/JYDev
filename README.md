@@ -1,84 +1,87 @@
-# Portfolio
+# JYDev — Freelance Consulting Site
 
-Interactive personal homepage built with Next.js App Router, Tailwind CSS, CSS Modules, Payload CMS, PostgreSQL, and a POEZA-style spatial canvas.
+Freelancer landing site for Jackie Ye, built on Payload CMS (which runs natively inside Next.js App Router), Tailwind CSS, and PostgreSQL. Visitors can browse services — software development, AI integration, infrastructure & cloud, and web — and submit a project inquiry for a free consultation and estimate.
 
 ## Getting Started
 
 ```bash
 npm install
-npm run dev
-```
-
-Open http://localhost:3000.
-
-## Current Direction
-
-The redesign moves into a high-end editorial spatial navigation system:
-
-- Fixed viewport with an oversized draggable canvas
-- Strong coffee-brown grid gaps with white editorial panels
-- Momentum, rubberband edge feedback, and wheel-based grid cycling
-- Center-first spiral placement for adding and removing grids
-- Payload CMS embedded in Next.js and backed by PostgreSQL
-
-## POEZA CMS with Payload
-
-The homepage loads grids through the local read proxy at `GET /api/grids`, which reads Payload's `grids` collection through the server-only Local API. Payload is the single content source for grid content; the frontend does not keep fallback portfolio copy.
-
-CMS entry points:
-
-```text
-Payload admin:      http://localhost:3000/admin
-Legacy redirect:    http://localhost:3000/cms -> /admin
-Payload REST API:   http://localhost:3000/api
-```
-
-The old in-app grid manager has been replaced by Payload. Use `/admin` for content editing; `/cms` only exists as a compatibility redirect to `/admin`.
-
-Frontend read endpoint:
-
-```text
-GET    /api/grids
-```
-
-Payload collection:
-
-```text
-Grid
-- label
-- kicker
-- title
-- body
-- meta
-- kind: hero | image | text | index | quote
-- image
-- orderIndex
-```
-
-Spiral placement order:
-
-```text
-center -> top -> top-right -> right -> bottom-right -> bottom -> bottom-left -> left -> top-left -> next outer ring
-```
-
-PostgreSQL:
-
-```bash
 cp .env.example .env
 docker compose -f docker-compose.dev.yml up --build
 ```
 
-On first Payload launch, create the admin user at `http://localhost:3000/admin`, then add grid content in the `Grid` collection.
-
-Production uses checked-in Payload migrations to create and update PostgreSQL tables automatically on app startup. `PAYLOAD_DB_PUSH` is only useful for local development; leave it `false` in production.
-
-To seed the production database with the DRE-positioned portfolio content, run the seed job after the production services are built and the database is healthy:
+Or run Postgres yourself and:
 
 ```bash
-docker compose --profile seed run --rm seed
+npm run dev
 ```
 
-The seed job uses the same `DATABASE_URL`, `PAYLOAD_SECRET`, and site URL values as the production app, writes through Payload's Local API, and is safe to rerun because grids are upserted by `orderIndex`.
+Open http://localhost:3000. On first launch, create the admin user at http://localhost:3000/admin.
+
+## Architecture
+
+Payload 3 is embedded in the Next.js app — there is no separate CMS server:
+
+```text
+Frontend:           http://localhost:3000        (Tailwind CSS landing page)
+Payload admin:      http://localhost:3000/admin
+Payload REST API:   http://localhost:3000/api
+Legacy redirect:    http://localhost:3000/cms -> /admin
+```
+
+## Inquiries
+
+The inquiry form on the homepage posts to `POST /api/inquiries`, which validates the payload, applies a honeypot check and per-IP rate limit, then writes to Payload's `inquiries` collection through the server-only Local API.
+
+```text
+Inquiry
+- name            (required)
+- email           (required)
+- company
+- serviceType     software | ai | infra | web | other
+- budget          under-2k | 2k-10k | 10k-50k | 50k-plus | undecided
+- message         (required)
+- status          new | in-review | replied | closed   (admin only)
+```
+
+New inquiries appear in the admin panel under **Inbox → Inquiries** (public create, authenticated read). Form option labels live in `lib/inquiries.ts` and must stay in sync with the collection config in `payload.config.js`.
+
+## Content model
+
+```text
+Collections: users, media, inquiries, showcases
+Globals:     global-settings (site name, SEO, social links), navigation
+```
+
+Landing page copy (hero, services, process, about) is maintained in `features/landing/LandingPage.tsx`; SEO metadata and social links are editable in `/admin` under Settings.
+
+## Gallery
+
+`/gallery` renders the `showcases` collection on a POEZA-style draggable infinite canvas — an oversized grid you pan with pointer drag (momentum + rubberband edges), zoom with the mouse wheel, or jump around via the numbered rail. Cells are placed center-first in a spiral by `orderIndex`, so the first showcase is the opening cell.
+
+**One cell = one project.** Every card uses the same structure — index, category, artwork inlaid into the panel, title, description, stack chips — but each project carries its own accent pair, so no two cells look alike:
+
+```text
+Showcase
+- title, kicker (category), meta (year / context)
+- body                     one or two sentences
+- accentFrom / accentTo    per-project hex accents; drive border, glow,
+                           index number, chips and link colour via color-mix()
+- tags[]                   stack chips
+- image (upload) / imageUrl   artwork inlaid into the card
+- link                     label + href
+- orderIndex               unique; spiral placement order, centre first
+```
+
+Cards are managed in `/admin` under Content → Showcases; changes revalidate `/gallery` automatically. The canvas implementation lives in `features/gallery/GalleryCanvas.tsx` (+ CSS module); spiral placement in `lib/gridSpiral.ts`. Off-screen cells lazy-unload via IntersectionObserver.
+
+To (re)seed the work set — six curated projects, each with its own hand-drawn SVG artwork in `public/images/work/`:
+
+```bash
+npx payload run scripts/seed-showcases.ts
+```
+
+It clears the collection first, so it is safe to re-run.
 
 ## Project Structure
 
@@ -86,36 +89,29 @@ The seed job uses the same `DATABASE_URL`, `PAYLOAD_SECRET`, and site URL values
 app/
   (frontend)/
     layout.tsx
-    page.tsx
-  (payload)/
-    layout.tsx
-    admin/
-    api/
-  globals.css
+    page.tsx          # landing page entry
+    gallery/          # showcase gallery page
+  (payload)/          # Payload admin & API routes
   api/
-  cms/
+    inquiries/        # inquiry submission endpoint
+    revalidate/
+  globals.css
 
 features/
-  grid-canvas/
-    PoezaCanvas.tsx
-    PoezaCanvas.module.css
+  landing/
+    LandingPage.tsx   # hero, services, process, about
+    InquiryForm.tsx   # client-side form
+    SiteChrome.tsx    # shared header/footer
+  gallery/
+    GalleryCanvas.tsx # draggable infinite canvas (POEZA-style)
 
 lib/
-  gridCms.ts
-  gridSpiral.ts
-  payload/
-    client.ts
-    mappers.ts
+  inquiries.ts        # shared options + validation
+  seo.ts              # metadata + structured data
+  payload/client.ts   # Local API accessor
 
-migrations/
-  index.ts
-  *_initial_payload_schema.ts
-
-types/
-  grid.ts
-
-styles/
-  tokens.css
+migrations/           # checked-in Payload/Postgres migrations
+styles/tokens.css     # design tokens used by tailwind.config.ts
 ```
 
 ## Useful Commands
@@ -124,18 +120,23 @@ styles/
 npm run dev
 npm run build
 npm run lint
+npm run typecheck
+npm run payload:generate        # regenerate payload-types.ts + admin import map
+npm run payload:migrate:create  # generate a migration after schema changes
 ```
 
 On Windows PowerShell, use `npm.cmd run build` if script execution policy blocks `npm`.
 
-## Personalization
+## Database & Migrations
 
-- Grid content: Payload `grids` collection in `/admin`
-- Site metadata: `NEXT_PUBLIC_SITE_NAME` and `NEXT_PUBLIC_SITE_DESCRIPTION`
-- Payload grid fetcher: `lib/gridCms.ts`
-- Spiral placement logic: `lib/gridSpiral.ts`
-- Visual theme tokens: `styles/tokens.css`
-- Main canvas interaction styling: `features/grid-canvas/PoezaCanvas.module.css`
+Production uses checked-in Payload migrations to create and update PostgreSQL tables automatically on app startup. `PAYLOAD_DB_PUSH=true` is only for local development; leave it `false` in production.
+
+After changing collections in `payload.config.js`:
+
+```bash
+npm run payload:migrate:create   # answer the prompts, review the generated SQL
+npm run payload:generate
+```
 
 ## Docker
 
@@ -143,13 +144,7 @@ On Windows PowerShell, use `npm.cmd run build` if script execution policy blocks
 docker compose up --build
 ```
 
-For a fresh production database, the web container runs the bundled Payload migrations when it first connects to Postgres. After `docker compose up -d --build`, visit `/admin` and create the first admin user.
-
-To seed the checked-in DRE portfolio content into production:
-
-```bash
-docker compose --profile seed run --rm seed
-```
+For a fresh production database, the web container runs the bundled migrations when it first connects to Postgres. After `docker compose up -d --build`, visit `/admin` and create the first admin user.
 
 Development container:
 
@@ -157,12 +152,17 @@ Development container:
 docker compose -f docker-compose.dev.yml up --build
 ```
 
-The development compose file stores Payload's Postgres data in `payload-postgres-data`.
-
 This starts:
 
 ```text
-Next.js:  http://localhost:3000
-Payload:  http://localhost:3000/admin
-Postgres: localhost:5432
+Next.js + Payload: http://localhost:3000
+Postgres:          localhost:5432
 ```
+
+## Personalization
+
+- Landing copy & services: `features/landing/LandingPage.tsx`
+- Inquiry options: `lib/inquiries.ts` + `payload.config.js` (keep in sync)
+- Site metadata / SEO / social links: `/admin` → Settings → Global Settings
+- Fallback metadata: `NEXT_PUBLIC_SITE_NAME`, `NEXT_PUBLIC_SITE_DESCRIPTION`
+- Design tokens: `styles/tokens.css` (consumed by `tailwind.config.ts`)

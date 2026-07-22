@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="A luminous neural dandelion: document light flows up the stem, seeds carry cited answers outward">
+  <defs>
+    <linearGradient id="a-sky" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#02100a"/>
+      <stop offset="0.5" stop-color="#041a11"/>
+      <stop offset="1" stop-color="#07271a"/>
+    </linearGradient>
+    <radialGradient id="a-aurora" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#34d399" stop-opacity="0.5"/>
+      <stop offset="0.5" stop-color="#a3e635" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#a3e635" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="a-core" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ecfccb"/>
+      <stop offset="0.4" stop-color="#a3e635"/>
+      <stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="a-stem" x1="0" y1="1" x2="0.3" y2="0">
+      <stop offset="0" stop-color="#10b981" stop-opacity="0.1"/>
+      <stop offset="0.6" stop-color="#34d399" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#a3e635"/>
+    </linearGradient>
+    <linearGradient id="a-glass" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#0d3826" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#062015" stop-opacity="0.94"/>
+    </linearGradient>
+    <radialGradient id="a-vign" cx="0.5" cy="0.46" r="0.76">
+      <stop offset="0.6" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#010805" stop-opacity="0.85"/>
+    </radialGradient>
+    <filter id="a-glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="11" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="a-soft" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+    <filter id="a-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#a-sky)"/>
+  <ellipse cx="520" cy="400" rx="470" ry="400" fill="url(#a-aurora)"/>
+
+  <!-- fireflies -->
+  <g fill="#d9f99d">
+    <circle cx="150" cy="180" r="2" opacity="0.6"/><circle cx="1080" cy="150" r="1.8" opacity="0.5"/>
+    <circle cx="980" cy="720" r="2.2" opacity="0.5"/><circle cx="120" cy="620" r="1.8" opacity="0.45"/>
+    <circle cx="740" cy="120" r="1.6" opacity="0.45"/><circle cx="260" cy="760" r="1.7" opacity="0.4"/>
+    <circle cx="1120" cy="480" r="1.6" opacity="0.4"/>
+  </g>
+
+  <!-- source docs, bottom left -->
+  <g>
+    <g transform="rotate(-7 190 640)">
+      <rect x="110" y="586" width="160" height="112" rx="12" fill="#08281a" stroke="#a3e635" stroke-opacity="0.45" stroke-width="1.3"/>
+      <rect x="132" y="608" width="62" height="8" rx="4" fill="#bef264" fill-opacity="0.8"/>
+      <g fill="#d9f99d" fill-opacity="0.22">
+        <rect x="132" y="628" width="112" height="6.5" rx="3"/><rect x="132" y="643" width="88" height="6.5" rx="3"/><rect x="132" y="658" width="102" height="6.5" rx="3"/>
+      </g>
+    </g>
+    <g transform="rotate(4 320 700)">
+      <rect x="246" y="646" width="160" height="112" rx="12" fill="#08281a" stroke="#34d399" stroke-opacity="0.5" stroke-width="1.3"/>
+      <rect x="268" y="668" width="74" height="8" rx="4" fill="#6ee7b7" fill-opacity="0.85"/>
+      <g fill="#a7f3d0" fill-opacity="0.22">
+        <rect x="268" y="688" width="112" height="6.5" rx="3"/><rect x="268" y="703" width="94" height="6.5" rx="3"/><rect x="268" y="718" width="106" height="6.5" rx="3"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- light drawn from docs into the stem -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M266 600 C 330 540, 380 520, 452 500" stroke="#bef264" stroke-opacity="0.5" stroke-width="1.8" stroke-dasharray="1 10"/>
+    <path d="M400 660 C 450 600, 470 560, 496 512" stroke="#6ee7b7" stroke-opacity="0.55" stroke-width="1.8" stroke-dasharray="1 10"/>
+  </g>
+
+  <!-- stem -->
+  <path d="M470 830 C 500 700, 490 600, 530 480 C 545 434, 552 410, 556 386"
+        fill="none" stroke="url(#a-stem)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M470 830 C 500 700, 490 600, 530 480" fill="none" stroke="#a3e635" stroke-opacity="0.25" stroke-width="16" stroke-linecap="round" filter="url(#a-soft)"/>
+
+  <!-- bloom head -->
+  <g transform="translate(560 340)">
+    <!-- filaments -->
+    <g fill="none" stroke="#a3e635" stroke-opacity="0.5" stroke-width="1.4">
+      <path d="M0 0 C 40 -60, 60 -90, 96 -128"/>
+      <path d="M0 0 C 76 -30, 110 -40, 164 -50"/>
+      <path d="M0 0 C 70 26, 116 40, 172 44"/>
+      <path d="M0 0 C 40 66, 76 96, 120 132"/>
+      <path d="M0 0 C -30 -70, -40 -104, -52 -148"/>
+      <path d="M0 0 C -66 -44, -96 -60, -142 -78"/>
+      <path d="M0 0 C -70 18, -110 22, -158 20"/>
+      <path d="M0 0 C -44 58, -66 88, -92 128"/>
+      <path d="M0 0 C 10 -80, 12 -120, 10 -168"/>
+      <path d="M0 0 C 96 -80, 120 -96, 158 -118"/>
+    </g>
+    <!-- seeds -->
+    <g filter="url(#a-glow)">
+      <circle cx="96" cy="-128" r="7" fill="#bef264"/>
+      <circle cx="164" cy="-50" r="6" fill="#a3e635"/>
+      <circle cx="172" cy="44" r="7" fill="#34d399"/>
+      <circle cx="120" cy="132" r="6" fill="#10b981"/>
+      <circle cx="-52" cy="-148" r="6" fill="#d9f99d"/>
+      <circle cx="-142" cy="-78" r="7" fill="#6ee7b7"/>
+      <circle cx="-158" cy="20" r="5.5" fill="#34d399"/>
+      <circle cx="-92" cy="128" r="6" fill="#059669"/>
+      <circle cx="10" cy="-168" r="6.5" fill="#ecfccb"/>
+      <circle cx="158" cy="-118" r="5.5" fill="#bef264"/>
+    </g>
+    <!-- seed halos -->
+    <g fill="none" stroke-opacity="0.4" stroke-width="1.2">
+      <circle cx="96" cy="-128" r="14" stroke="#bef264"/>
+      <circle cx="172" cy="44" r="14" stroke="#34d399"/>
+      <circle cx="-142" cy="-78" r="13" stroke="#6ee7b7"/>
+    </g>
+
+    <!-- rings -->
+    <circle r="86" fill="none" stroke="#6ee7b7" stroke-opacity="0.35" stroke-width="1.3"/>
+    <circle r="112" fill="none" stroke="#a3e635" stroke-opacity="0.22" stroke-width="1.1" stroke-dasharray="2 9"/>
+
+    <!-- core -->
+    <g filter="url(#a-glow)">
+      <circle r="46" fill="url(#a-core)"/>
+    </g>
+    <circle r="20" fill="#02100a" opacity="0.4"/>
+    <circle r="58" fill="none" stroke="#ecfccb" stroke-opacity="0.5" stroke-width="1.2"/>
+  </g>
+
+  <!-- drifting seeds crossing to the answer -->
+  <g fill="none" stroke="#bef264" stroke-opacity="0.45" stroke-width="1.4">
+    <path d="M732 300 C 790 280, 830 274, 876 276" stroke-dasharray="1 9"/>
+    <path d="M736 390 C 800 396, 840 400, 880 404" stroke-dasharray="1 9"/>
+  </g>
+
+  <!-- crystallized answer panel -->
+  <g>
+    <rect x="880" y="228" width="252" height="232" rx="20" fill="url(#a-glass)" stroke="#34d399" stroke-opacity="0.6" stroke-width="1.6"/>
+    <rect x="880" y="228" width="252" height="76" rx="20" fill="#a3e635" fill-opacity="0.07"/>
+    <circle cx="916" cy="266" r="13" fill="#a3e635" fill-opacity="0.2" stroke="#a3e635" stroke-opacity="0.6" stroke-width="1.3"/>
+    <path d="M909 266 l5 5 l9 -10" stroke="#d9f99d" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="940" y="274" font-family="'Cascadia Mono','Consolas',monospace" font-size="19" letter-spacing="2.5" fill="#bef264">GROUNDED</text>
+    <g fill="#d1fae5" fill-opacity="0.25">
+      <rect x="908" y="318" width="196" height="9" rx="4.5"/>
+      <rect x="908" y="340" width="164" height="9" rx="4.5"/>
+      <rect x="908" y="362" width="184" height="9" rx="4.5"/>
+      <rect x="908" y="384" width="120" height="9" rx="4.5"/>
+    </g>
+    <!-- citation chips -->
+    <g>
+      <rect x="908" y="412" width="86" height="30" rx="15" fill="#0a2f1e" stroke="#a3e635" stroke-opacity="0.55" stroke-width="1.2"/>
+      <text x="925" y="432" font-family="'Cascadia Mono','Consolas',monospace" font-size="15" fill="#bef264">[1]</text>
+      <rect x="1002" y="412" width="86" height="30" rx="15" fill="#0a2f1e" stroke="#34d399" stroke-opacity="0.5" stroke-width="1.2"/>
+      <text x="1019" y="432" font-family="'Cascadia Mono','Consolas',monospace" font-size="15" fill="#6ee7b7">[2]</text>
+    </g>
+  </g>
+
+  <rect width="1200" height="900" fill="url(#a-vign)"/>
+  <rect width="1200" height="900" filter="url(#a-grain)" opacity="0.05"/>
+</svg>

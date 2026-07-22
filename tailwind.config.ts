@@ -33,6 +33,7 @@ const config: Config = {
           DEFAULT: "var(--color-primary)",
           hover: "var(--color-primary-hover)",
           soft: "var(--color-primary-soft)",
+          "soft-hover": "var(--color-primary-soft-hover)",
         },
         secondary: "var(--color-secondary)",
         tertiary: "var(--color-tertiary)",
@@ -65,6 +66,8 @@ const config: Config = {
       boxShadow: {
         focus: "0 0 0 3px var(--color-primary-soft-hover)",
         panel: "0 24px 80px rgba(0, 0, 0, 0.18)",
+        glow: "0 0 18px rgba(119, 229, 200, 0.18)",
+        "glow-strong": "0 0 28px rgba(119, 229, 200, 0.42)",
       },
       spacing: {
         section: "var(--section-padding-y)",

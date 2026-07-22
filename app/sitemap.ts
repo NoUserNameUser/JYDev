@@ -15,5 +15,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 1,
     },
+    {
+      url: `${siteUrl}/gallery`,
+      lastModified: settings?.updatedAt ? new Date(settings.updatedAt) : new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
   ];
 }

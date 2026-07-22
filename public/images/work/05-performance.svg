@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="A blazing comet at 8.4 seconds cooling into a calm ember at 0.9 seconds, nine times faster">
+  <defs>
+    <linearGradient id="f-sky" x1="0" y1="0" x2="0.7" y2="1">
+      <stop offset="0" stop-color="#170607"/>
+      <stop offset="0.45" stop-color="#0e0708"/>
+      <stop offset="1" stop-color="#080607"/>
+    </linearGradient>
+    <radialGradient id="f-heat" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ef4444" stop-opacity="0.55"/>
+      <stop offset="0.5" stop-color="#dc2626" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#dc2626" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="f-ember" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fdba74" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#fdba74" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="f-trail" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ef4444"/>
+      <stop offset="0.4" stop-color="#f97316"/>
+      <stop offset="0.75" stop-color="#fb923c"/>
+      <stop offset="1" stop-color="#fed7aa"/>
+    </linearGradient>
+    <linearGradient id="f-trailFill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ef4444" stop-opacity="0.6"/>
+      <stop offset="0.5" stop-color="#f97316" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#fdba74" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="f-nine" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fecaca"/>
+      <stop offset="0.5" stop-color="#fb923c"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+    <radialGradient id="f-vign" cx="0.5" cy="0.46" r="0.76">
+      <stop offset="0.58" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#050303" stop-opacity="0.88"/>
+    </radialGradient>
+    <filter id="f-glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="12" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="f-soft" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="f-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#f-sky)"/>
+  <ellipse cx="220" cy="260" rx="360" ry="300" fill="url(#f-heat)"/>
+  <ellipse cx="1010" cy="640" rx="260" ry="200" fill="url(#f-ember)"/>
+
+  <!-- distant sparks -->
+  <g fill="#fed7aa">
+    <circle cx="820" cy="150" r="1.6" opacity="0.5"/><circle cx="1080" cy="220" r="1.4" opacity="0.45"/>
+    <circle cx="580" cy="120" r="1.3" opacity="0.4"/><circle cx="140" cy="700" r="1.5" opacity="0.4"/>
+    <circle cx="420" cy="780" r="1.3" opacity="0.35"/><circle cx="1120" cy="420" r="1.4" opacity="0.4"/>
+  </g>
+
+  <!-- trail body (tapered) -->
+  <path d="M180 236 C 420 320, 540 430, 700 520 C 830 592, 920 626, 1006 642
+           C 922 610, 836 566, 712 488 C 560 392, 420 292, 172 250 Z"
+        fill="url(#f-trailFill)" filter="url(#f-soft)"/>
+
+  <!-- trail core -->
+  <path d="M176 244 C 430 310, 560 420, 716 506 C 848 578, 936 618, 1008 640"
+        fill="none" stroke="url(#f-trail)" stroke-width="9" stroke-linecap="round"/>
+  <path d="M176 244 C 430 310, 560 420, 716 506 C 848 578, 936 618, 1008 640"
+        fill="none" stroke="#fff7ed" stroke-opacity="0.55" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="2 26"/>
+
+  <!-- speed hairlines -->
+  <g stroke-linecap="round" fill="none">
+    <path d="M300 226 C 480 288, 600 372, 740 452" stroke="#f97316" stroke-opacity="0.32" stroke-width="2"/>
+    <path d="M260 330 C 440 396, 560 470, 700 552" stroke="#ef4444" stroke-opacity="0.26" stroke-width="2"/>
+    <path d="M420 300 l58 26 M560 392 l52 30 M840 566 l44 20" stroke="#fdba74" stroke-opacity="0.4" stroke-width="1.6"/>
+  </g>
+
+  <!-- ember particles along trail -->
+  <g fill="#fb923c">
+    <circle cx="360" cy="300" r="3.6" opacity="0.9"/><circle cx="452" cy="352" r="2.6" opacity="0.75"/>
+    <circle cx="548" cy="416" r="3.8" opacity="0.9"/><circle cx="640" cy="474" r="2.4" opacity="0.7"/>
+    <circle cx="742" cy="530" r="3.2" opacity="0.85"/><circle cx="836" cy="582" r="2.4" opacity="0.7"/>
+    <circle cx="912" cy="614" r="2.8" opacity="0.75"/>
+  </g>
+  <g fill="#fecaca">
+    <circle cx="322" cy="264" r="2.2" opacity="0.8"/><circle cx="502" cy="368" r="2" opacity="0.65"/>
+    <circle cx="688" cy="486" r="2.2" opacity="0.7"/><circle cx="874" cy="588" r="1.8" opacity="0.6"/>
+  </g>
+
+  <!-- comet head: blazing 8.4s -->
+  <g>
+    <circle cx="176" cy="244" r="34" fill="#ef4444" filter="url(#f-glow)"/>
+    <circle cx="176" cy="244" r="16" fill="#fff1f0"/>
+    <g fill="none" stroke="#ef4444">
+      <circle cx="176" cy="244" r="52" stroke-opacity="0.5" stroke-width="1.8"/>
+      <circle cx="176" cy="244" r="74" stroke-opacity="0.24" stroke-width="1.5"/>
+    </g>
+    <g transform="rotate(-8 292 262)">
+      <rect x="232" y="272" width="150" height="60" rx="16" fill="#1c0708" fill-opacity="0.92" stroke="#ef4444" stroke-opacity="0.6" stroke-width="1.5"/>
+      <text x="256" y="314" font-family="'Segoe UI','Inter',system-ui,sans-serif" font-size="34" font-weight="800" fill="#fca5a5">8.4s</text>
+    </g>
+  </g>
+
+  <!-- landing: calm ember 0.9s -->
+  <g>
+    <circle cx="1008" cy="640" r="15" fill="#fed7aa" filter="url(#f-glow)"/>
+    <circle cx="1008" cy="640" r="6.5" fill="#fff7ed"/>
+    <g fill="none" stroke="#fdba74">
+      <circle cx="1008" cy="640" r="34" stroke-opacity="0.55" stroke-width="1.6"/>
+      <circle cx="1008" cy="640" r="56" stroke-opacity="0.28" stroke-width="1.4"/>
+      <circle cx="1008" cy="640" r="82" stroke-opacity="0.12" stroke-width="1.3"/>
+    </g>
+    <g transform="rotate(4 1010 560)">
+      <rect x="930" y="520" width="150" height="60" rx="16" fill="#140d08" fill-opacity="0.92" stroke="#fb923c" stroke-opacity="0.65" stroke-width="1.5"/>
+      <text x="954" y="562" font-family="'Segoe UI','Inter',system-ui,sans-serif" font-size="34" font-weight="800" fill="#fed7aa">0.9s</text>
+    </g>
+  </g>
+
+  <!-- the 9x -->
+  <g>
+    <circle cx="560" cy="600" r="104" fill="none" stroke="#f97316" stroke-opacity="0.3" stroke-width="1.6" stroke-dasharray="3 10"/>
+    <circle cx="560" cy="600" r="82" fill="#0c0605" fill-opacity="0.6" stroke="#f97316" stroke-opacity="0.55" stroke-width="1.8"/>
+    <text x="560" y="634" text-anchor="middle" font-family="'Segoe UI','Inter',system-ui,sans-serif" font-size="88" font-weight="800" fill="url(#f-nine)" filter="url(#f-glow)">9&#215;</text>
+    <text x="560" y="672" text-anchor="middle" font-family="'Cascadia Mono','Consolas',monospace" font-size="16" letter-spacing="4" fill="#fdba74" opacity="0.8">FASTER</text>
+  </g>
+
+  <rect width="1200" height="900" fill="url(#f-vign)"/>
+  <rect width="1200" height="900" filter="url(#f-grain)" opacity="0.05"/>
+</svg>

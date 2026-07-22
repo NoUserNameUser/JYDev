@@ -4,10 +4,14 @@ import { fileURLToPath } from "node:url";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 import { migrations } from "./migrations/index.ts";
-import { revalidateHome } from "./lib/revalidate.ts";
+import { revalidateGallery, revalidateHome } from "./lib/revalidate.ts";
 
 const revalidateHomeHook = () => {
   revalidateHome();
+};
+
+const revalidateGalleryHook = () => {
+  revalidateGallery();
 };
 
 const filename = fileURLToPath(import.meta.url);
@@ -33,60 +37,6 @@ const seoFields = [
   { name: "structuredData", type: "json" },
 ];
 
-const gridElementBlocks = [
-  {
-    slug: "background",
-    fields: [
-      { name: "color", type: "text", defaultValue: "#ffffff" },
-      { name: "imageSrc", type: "text" },
-      { name: "imageAlt", type: "text" },
-      { name: "imageOpacity", type: "number", min: 0, max: 1, defaultValue: 0.88 },
-    ],
-  },
-  {
-    slug: "text",
-    fields: [
-      { name: "eyebrow", type: "text" },
-      { name: "heading", type: "text" },
-      { name: "body", type: "textarea" },
-    ],
-  },
-  {
-    slug: "image",
-    fields: [
-      { name: "src", type: "text", required: true },
-      { name: "alt", type: "text" },
-      { name: "caption", type: "text" },
-      { name: "placement", type: "select", required: true, defaultValue: "inline", options: ["inline", "background"] },
-    ],
-  },
-  { slug: "link", fields: linkFields },
-  {
-    slug: "button",
-    fields: [
-      { name: "label", type: "text", required: true },
-      { name: "href", type: "text", required: true },
-      { name: "variant", type: "select", required: true, defaultValue: "primary", options: ["primary", "secondary", "text"] },
-      { name: "openInNewTab", type: "checkbox", defaultValue: false },
-    ],
-  },
-  {
-    slug: "shape",
-    fields: [
-      { name: "name", type: "text" },
-      { name: "shape", type: "select", required: true, defaultValue: "triangle", options: ["triangle", "circle", "rectangle"] },
-      { name: "color", type: "text", defaultValue: "rgba(53, 47, 42, 0.16)" },
-      { name: "opacity", type: "number", min: 0, max: 1, defaultValue: 1 },
-      { name: "width", type: "text", defaultValue: "16%" },
-      { name: "height", type: "text", defaultValue: "86px" },
-      { name: "x", type: "text", defaultValue: "50%" },
-      { name: "y", type: "text", defaultValue: "20%" },
-      { name: "rotation", type: "number", defaultValue: 0 },
-      { name: "zIndex", type: "number", defaultValue: 1 },
-    ],
-  },
-];
-
 const Users = {
   slug: "users",
   auth: true,
@@ -110,22 +60,124 @@ const Media = {
   fields: [{ name: "alt", type: "text", required: true }],
 };
 
-const Grids = {
-  slug: "grids",
-  access: { create: authenticatedOnly, read: publicRead, update: authenticatedOnly, delete: authenticatedOnly },
-  admin: { useAsTitle: "label", defaultColumns: ["label", "kind", "orderIndex", "updatedAt"], group: "Content" },
-  defaultSort: "orderIndex",
-  hooks: {
-    afterChange: [revalidateHomeHook],
-    afterDelete: [revalidateHomeHook],
+const Inquiries = {
+  slug: "inquiries",
+  access: {
+    create: publicRead,
+    read: authenticatedOnly,
+    update: authenticatedOnly,
+    delete: authenticatedOnly,
+  },
+  admin: {
+    useAsTitle: "name",
+    defaultColumns: ["name", "email", "serviceType", "status", "createdAt"],
+    group: "Inbox",
+    description: "Project inquiries submitted through the website form.",
   },
   fields: [
-    { name: "label", type: "text", required: true },
-    { name: "kicker", type: "text", required: true },
-    { name: "meta", type: "text", required: true },
-    { name: "kind", type: "select", required: true, defaultValue: "text", options: ["hero", "image", "text", "index", "quote"] },
-    { name: "elements", type: "blocks", blocks: gridElementBlocks },
-    { name: "localCss", type: "textarea" },
+    { name: "name", type: "text", required: true, maxLength: 120 },
+    { name: "email", type: "email", required: true },
+    { name: "company", type: "text", maxLength: 160 },
+    {
+      name: "serviceType",
+      type: "select",
+      required: true,
+      options: [
+        { label: "Software Development", value: "software" },
+        { label: "AI Integration", value: "ai" },
+        { label: "Infrastructure & Cloud", value: "infra" },
+        { label: "Website / Web App", value: "web" },
+        { label: "Other / Not sure yet", value: "other" },
+      ],
+    },
+    {
+      name: "budget",
+      type: "select",
+      options: [
+        { label: "Under $2k", value: "under-2k" },
+        { label: "$2k – $10k", value: "2k-10k" },
+        { label: "$10k – $50k", value: "10k-50k" },
+        { label: "$50k+", value: "50k-plus" },
+        { label: "Not sure yet", value: "undecided" },
+      ],
+    },
+    { name: "message", type: "textarea", required: true, maxLength: 4000 },
+    {
+      name: "status",
+      type: "select",
+      defaultValue: "new",
+      options: [
+        { label: "New", value: "new" },
+        { label: "In review", value: "in-review" },
+        { label: "Replied", value: "replied" },
+        { label: "Closed", value: "closed" },
+      ],
+      access: {
+        create: ({ req: { user } }) => Boolean(user),
+        update: ({ req: { user } }) => Boolean(user),
+      },
+      admin: { position: "sidebar" },
+    },
+  ],
+};
+
+const Showcases = {
+  slug: "showcases",
+  access: {
+    create: authenticatedOnly,
+    read: publicRead,
+    update: authenticatedOnly,
+    delete: authenticatedOnly,
+  },
+  admin: {
+    useAsTitle: "title",
+    defaultColumns: ["title", "kicker", "orderIndex", "updatedAt"],
+    group: "Content",
+    description: "One card per project on the /gallery canvas, ordered by orderIndex (1 = centre cell).",
+  },
+  defaultSort: "orderIndex",
+  hooks: {
+    afterChange: [revalidateGalleryHook],
+    afterDelete: [revalidateGalleryHook],
+  },
+  fields: [
+    { name: "title", type: "text", required: true },
+    { name: "kicker", type: "text", admin: { description: "Category label, e.g. INFRASTRUCTURE." } },
+    { name: "meta", type: "text", admin: { description: "Year / context, e.g. 2019 · Telecom." } },
+    { name: "body", type: "textarea", admin: { description: "One or two sentences describing the work." } },
+    {
+      name: "accentFrom",
+      type: "text",
+      defaultValue: "#77e5c8",
+      admin: { description: "Primary accent hex for this project (drives border, glow and type)." },
+    },
+    {
+      name: "accentTo",
+      type: "text",
+      defaultValue: "#b6f35a",
+      admin: { description: "Secondary accent hex, used for gradients." },
+    },
+    {
+      name: "tags",
+      type: "array",
+      admin: { description: "Stack chips shown under the description." },
+      fields: [{ name: "label", type: "text", required: true }],
+    },
+    { name: "image", type: "upload", relationTo: "media" },
+    {
+      name: "imageUrl",
+      type: "text",
+      admin: { description: "Artwork inlaid into the card. External URL or a path like /images/work/foo.svg." },
+    },
+    {
+      name: "link",
+      type: "group",
+      fields: [
+        { name: "label", type: "text" },
+        { name: "href", type: "text" },
+        { name: "openInNewTab", type: "checkbox", defaultValue: false },
+      ],
+    },
     { name: "orderIndex", type: "number", required: true, unique: true, index: true },
   ],
 };
@@ -170,7 +222,7 @@ export default buildConfig({
       importMapFile: path.resolve(dirname, "app/(payload)/admin/importMap.js"),
     },
   },
-  collections: [Users, Media, Grids],
+  collections: [Users, Media, Inquiries, Showcases],
   cors: corsOrigins?.length ? corsOrigins : [process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"],
   csrf: corsOrigins?.length ? corsOrigins : [process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"],
   db: postgresAdapter({

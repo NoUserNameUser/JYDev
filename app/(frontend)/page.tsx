@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
-import { PoezaCanvas } from "@/features/grid-canvas";
-import { listGridSections } from "@/lib/gridCms";
+import { LandingPage } from "@/features/landing";
 import { buildHomeMetadata, buildHomeStructuredData, getGlobalSettings } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -12,11 +11,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [settings, sections] = await Promise.all([
-    getGlobalSettings(),
-    listGridSections().catch(() => []),
-  ]);
-  const structuredData = buildHomeStructuredData(settings, sections);
+  const settings = await getGlobalSettings();
+  const structuredData = buildHomeStructuredData(settings);
 
   return (
     <>
@@ -25,7 +21,7 @@ export default async function HomePage() {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <PoezaCanvas initialSections={sections} />
+      <LandingPage settings={settings} />
     </>
   );
 }
