@@ -69,7 +69,8 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
-    grids: Grid;
+    inquiries: Inquiry;
+    showcases: Showcase;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -79,7 +80,8 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    grids: GridsSelect<false> | GridsSelect<true>;
+    inquiries: InquiriesSelect<false> | InquiriesSelect<true>;
+    showcases: ShowcasesSelect<false> | ShowcasesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -196,78 +198,71 @@ export interface Media {
   };
 }
 /**
+ * Project inquiries submitted through the website form.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "grids".
+ * via the `definition` "inquiries".
  */
-export interface Grid {
+export interface Inquiry {
   id: number;
-  label: string;
-  kicker: string;
-  meta: string;
-  kind: 'hero' | 'image' | 'text' | 'index' | 'quote';
-  elements?:
-    | (
-        | {
-            color?: string | null;
-            imageSrc?: string | null;
-            imageAlt?: string | null;
-            imageOpacity?: number | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'background';
-          }
-        | {
-            eyebrow?: string | null;
-            heading?: string | null;
-            body?: string | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'text';
-          }
-        | {
-            src: string;
-            alt?: string | null;
-            caption?: string | null;
-            placement: 'inline' | 'background';
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'image';
-          }
-        | {
-            label: string;
-            href: string;
-            openInNewTab?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'link';
-          }
-        | {
-            label: string;
-            href: string;
-            variant: 'primary' | 'secondary' | 'text';
-            openInNewTab?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'button';
-          }
-        | {
-            name?: string | null;
-            shape: 'triangle' | 'circle' | 'rectangle';
-            color?: string | null;
-            opacity?: number | null;
-            width?: string | null;
-            height?: string | null;
-            x?: string | null;
-            y?: string | null;
-            rotation?: number | null;
-            zIndex?: number | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'shape';
-          }
-      )[]
+  name: string;
+  email: string;
+  company?: string | null;
+  serviceType: 'software' | 'ai' | 'infra' | 'web' | 'other';
+  budget?: ('under-2k' | '2k-10k' | '10k-50k' | '50k-plus' | 'undecided') | null;
+  message: string;
+  status?: ('new' | 'in-review' | 'replied' | 'closed') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * One card per project on the /gallery canvas, ordered by orderIndex (1 = centre cell).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "showcases".
+ */
+export interface Showcase {
+  id: number;
+  title: string;
+  /**
+   * Category label, e.g. INFRASTRUCTURE.
+   */
+  kicker?: string | null;
+  /**
+   * Year / context, e.g. 2019 · Telecom.
+   */
+  meta?: string | null;
+  /**
+   * One or two sentences describing the work.
+   */
+  body?: string | null;
+  /**
+   * Primary accent hex for this project (drives border, glow and type).
+   */
+  accentFrom?: string | null;
+  /**
+   * Secondary accent hex, used for gradients.
+   */
+  accentTo?: string | null;
+  /**
+   * Stack chips shown under the description.
+   */
+  tags?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
     | null;
-  localCss?: string | null;
+  image?: (number | null) | Media;
+  /**
+   * Artwork inlaid into the card. External URL or a path like /images/work/foo.svg.
+   */
+  imageUrl?: string | null;
+  link?: {
+    label?: string | null;
+    href?: string | null;
+    openInNewTab?: boolean | null;
+  };
   orderIndex: number;
   updatedAt: string;
   createdAt: string;
@@ -305,8 +300,12 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
-        relationTo: 'grids';
-        value: number | Grid;
+        relationTo: 'inquiries';
+        value: number | Inquiry;
+      } | null)
+    | ({
+        relationTo: 'showcases';
+        value: number | Showcase;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -426,82 +425,45 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "grids_select".
+ * via the `definition` "inquiries_select".
  */
-export interface GridsSelect<T extends boolean = true> {
-  label?: T;
+export interface InquiriesSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  company?: T;
+  serviceType?: T;
+  budget?: T;
+  message?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "showcases_select".
+ */
+export interface ShowcasesSelect<T extends boolean = true> {
+  title?: T;
   kicker?: T;
   meta?: T;
-  kind?: T;
-  elements?:
+  body?: T;
+  accentFrom?: T;
+  accentTo?: T;
+  tags?:
     | T
     | {
-        background?:
-          | T
-          | {
-              color?: T;
-              imageSrc?: T;
-              imageAlt?: T;
-              imageOpacity?: T;
-              id?: T;
-              blockName?: T;
-            };
-        text?:
-          | T
-          | {
-              eyebrow?: T;
-              heading?: T;
-              body?: T;
-              id?: T;
-              blockName?: T;
-            };
-        image?:
-          | T
-          | {
-              src?: T;
-              alt?: T;
-              caption?: T;
-              placement?: T;
-              id?: T;
-              blockName?: T;
-            };
-        link?:
-          | T
-          | {
-              label?: T;
-              href?: T;
-              openInNewTab?: T;
-              id?: T;
-              blockName?: T;
-            };
-        button?:
-          | T
-          | {
-              label?: T;
-              href?: T;
-              variant?: T;
-              openInNewTab?: T;
-              id?: T;
-              blockName?: T;
-            };
-        shape?:
-          | T
-          | {
-              name?: T;
-              shape?: T;
-              color?: T;
-              opacity?: T;
-              width?: T;
-              height?: T;
-              x?: T;
-              y?: T;
-              rotation?: T;
-              zIndex?: T;
-              id?: T;
-              blockName?: T;
-            };
+        label?: T;
+        id?: T;
       };
-  localCss?: T;
+  image?: T;
+  imageUrl?: T;
+  link?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        openInNewTab?: T;
+      };
   orderIndex?: T;
   updatedAt?: T;
   createdAt?: T;

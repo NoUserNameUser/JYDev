@@ -2,40 +2,39 @@ import type { Metadata } from "next";
 
 import { env } from "@/config/env";
 import { getPayloadClient } from "@/lib/payload/client";
+import { SERVICE_TYPES } from "@/lib/inquiries";
 import type { GlobalSetting, Media } from "@/payload-types";
-import type { GridSection } from "@/types/grid";
 
 const SKIP_BUILD_CMS = process.env.NEXT_SKIP_BUILD_CMS === "1";
 const FALLBACK_SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME ?? "Jackie Ye";
-const FALLBACK_TITLE = "Jackie Ye | Software Development Engineer";
+const FALLBACK_TITLE = "Jackie Ye | Freelance Software, AI & Infrastructure Consultant";
 const FALLBACK_SITE_URL = "http://localhost:3000";
 const FALLBACK_DESCRIPTION =
   process.env.NEXT_PUBLIC_SITE_DESCRIPTION ??
-  "Jackie Ye is a software development engineer focused on backend systems, cloud infrastructure, automation, and production ownership for telecom-scale platforms.";
-const DRE_KEYWORDS = [
+  "Jackie Ye is a freelance software consultant in Vancouver offering free consultations and estimates for software development, AI integration, cloud infrastructure, and web projects.";
+const SEO_KEYWORDS = [
   "Jackie Ye",
-  "software development engineer",
-  "backend systems",
+  "freelance software developer",
+  "software consultant",
+  "free software consultation",
+  "project estimate",
+  "AI integration",
+  "LLM integration",
   "cloud infrastructure",
-  "automation",
-  "full-stack developer",
+  "AWS migration",
+  "infrastructure architecture",
+  "web development",
   "full stack developer",
-  "web developer",
-  "software developer",
-  "production systems",
-  "telecom software",
-  "Full Stack Engineer",
-  "Docker",
-  "Docker Compose",
-  "CI/CD",
-  "Observability",
-  "CMS optimization",
-  "Rogers Communications",
-  "Cityfone",
-  "Java Spring Boot",
+  "backend systems",
+  "CMS development",
+  "Payload CMS",
+  "Next.js",
+  "TypeScript",
   "Python",
-  "AWS",
-  "Linux",
+  "Docker",
+  "CI/CD",
+  "Vancouver",
+  "remote",
 ];
 
 function trimTrailingSlash(value: string) {
@@ -85,7 +84,7 @@ export function buildHomeMetadata(settings?: GlobalSetting | null): Metadata {
     metadataBase: new URL(siteUrl),
     title,
     description,
-    keywords: DRE_KEYWORDS,
+    keywords: SEO_KEYWORDS,
     applicationName: settings?.siteName || FALLBACK_SITE_NAME,
     alternates: {
       canonical,
@@ -127,18 +126,6 @@ export function buildHomeMetadata(settings?: GlobalSetting | null): Metadata {
   };
 }
 
-function collectKeywords(sections: GridSection[]) {
-  const words = new Set<string>();
-
-  for (const section of sections) {
-    [section.label, section.kicker, section.meta].forEach((value) => {
-      if (value) words.add(value);
-    });
-  }
-
-  return Array.from(words).slice(0, 12);
-}
-
 function stripStructuredDataEmail(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(stripStructuredDataEmail);
 
@@ -151,7 +138,7 @@ function stripStructuredDataEmail(value: unknown): unknown {
   );
 }
 
-export function buildHomeStructuredData(settings: GlobalSetting | null, sections: GridSection[]) {
+export function buildHomeStructuredData(settings: GlobalSetting | null) {
   const siteUrl = getSiteUrl(settings);
   const siteName = settings?.siteName || FALLBACK_SITE_NAME;
   const description = settings?.defaultSeo?.metaDescription || FALLBACK_DESCRIPTION;
@@ -160,6 +147,8 @@ export function buildHomeStructuredData(settings: GlobalSetting | null, sections
   if (configuredData && typeof configuredData === "object") {
     return stripStructuredDataEmail(configuredData);
   }
+
+  const sameAs = settings?.socialLinks?.map((link) => link.href).filter(Boolean) ?? [];
 
   return {
     "@context": "https://schema.org",
@@ -176,8 +165,29 @@ export function buildHomeStructuredData(settings: GlobalSetting | null, sections
         "@id": `${siteUrl}/#person`,
         name: siteName,
         url: siteUrl,
-        sameAs: settings?.socialLinks?.map((link) => link.href).filter(Boolean) ?? [],
-        knowsAbout: collectKeywords(sections),
+        jobTitle: "Freelance Software Consultant",
+        sameAs,
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": `${siteUrl}/#service`,
+        name: `${siteName} — Freelance Software Consulting`,
+        url: siteUrl,
+        description,
+        founder: { "@id": `${siteUrl}/#person` },
+        areaServed: "Worldwide (remote)",
+        priceRange: "Free consultation & estimate",
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: "Consulting services",
+          itemListElement: SERVICE_TYPES.filter((service) => service.value !== "other").map((service) => ({
+            "@type": "Offer",
+            itemOffered: {
+              "@type": "Service",
+              name: service.label,
+            },
+          })),
+        },
       },
     ],
   };

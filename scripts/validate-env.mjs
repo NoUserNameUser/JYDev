@@ -33,6 +33,8 @@ const requiredByTarget = {
     "NEXT_REVALIDATE_SECRET",
     "PAYLOAD_WEBHOOK_SECRET",
     "CORS_ORIGINS",
+    "TELEGRAM_BOT_TOKEN",
+    "TELEGRAM_CHAT_ID",
   ],
   development: [],
 };

@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="A server monolith dissolving into light, ascending into an orbital cloud lattice">
+  <defs>
+    <linearGradient id="m-sky" x1="0" y1="1" x2="0.6" y2="0">
+      <stop offset="0" stop-color="#040910"/>
+      <stop offset="0.45" stop-color="#071224"/>
+      <stop offset="0.8" stop-color="#0b1b3f"/>
+      <stop offset="1" stop-color="#101f4d"/>
+    </linearGradient>
+    <linearGradient id="m-monolith" x1="0" y1="0" x2="1" y2="0.2">
+      <stop offset="0" stop-color="#0a1526"/>
+      <stop offset="0.5" stop-color="#0e2138"/>
+      <stop offset="1" stop-color="#071120"/>
+    </linearGradient>
+    <linearGradient id="m-rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#67e8f9" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="m-river" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0"/>
+      <stop offset="0.35" stop-color="#22d3ee" stop-opacity="0.55"/>
+      <stop offset="0.75" stop-color="#60a5fa" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#818cf8"/>
+    </linearGradient>
+    <linearGradient id="m-core" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a5f3fc"/>
+      <stop offset="0.45" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#6366f1"/>
+    </linearGradient>
+    <radialGradient id="m-nebula" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#6366f1" stop-opacity="0.5"/>
+      <stop offset="0.55" stop-color="#4f46e5" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#4f46e5" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="m-ground" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="m-vign" cx="0.5" cy="0.46" r="0.75">
+      <stop offset="0.62" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#01050c" stop-opacity="0.85"/>
+    </radialGradient>
+    <filter id="m-glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="14" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="m-soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <filter id="m-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#m-sky)"/>
+  <ellipse cx="880" cy="300" rx="470" ry="360" fill="url(#m-nebula)"/>
+
+  <!-- starfield -->
+  <g fill="#e0f2fe">
+    <circle cx="150" cy="140" r="1.6" opacity="0.7"/><circle cx="320" cy="90" r="1.2" opacity="0.5"/>
+    <circle cx="540" cy="150" r="1.8" opacity="0.8"/><circle cx="700" cy="80" r="1.2" opacity="0.4"/>
+    <circle cx="1080" cy="120" r="1.6" opacity="0.7"/><circle cx="990" cy="70" r="1.1" opacity="0.5"/>
+    <circle cx="90" cy="330" r="1.3" opacity="0.5"/><circle cx="1130" cy="300" r="1.4" opacity="0.6"/>
+    <circle cx="240" cy="220" r="1.1" opacity="0.4"/><circle cx="860" cy="140" r="1.3" opacity="0.55"/>
+    <circle cx="440" cy="70" r="1" opacity="0.35"/><circle cx="620" cy="230" r="1.1" opacity="0.4"/>
+  </g>
+
+  <!-- ground haze under monolith -->
+  <ellipse cx="300" cy="760" rx="360" ry="120" fill="url(#m-ground)"/>
+
+  <!-- the monolith, dissolving -->
+  <g>
+    <path d="M210 760 L246 380 L354 380 L390 760 Z" fill="url(#m-monolith)"/>
+    <path d="M246 380 L354 380 L390 760" fill="none" stroke="#67e8f9" stroke-opacity="0.45" stroke-width="1.6"/>
+    <path d="M246 380 L210 760" fill="none" stroke="#67e8f9" stroke-opacity="0.14" stroke-width="1.4"/>
+    <!-- rack seams -->
+    <g stroke="#67e8f9" stroke-opacity="0.16" stroke-width="1.2">
+      <path d="M243 430 h113 M240 490 h118 M236 550 h124 M232 615 h130 M228 680 h138"/>
+    </g>
+    <!-- live lights -->
+    <g fill="#22d3ee">
+      <circle cx="262" cy="460" r="3.4" opacity="0.9"/><circle cx="278" cy="460" r="3.4" opacity="0.4"/>
+      <circle cx="260" cy="522" r="3.4" opacity="0.7"/><circle cx="276" cy="522" r="3.4" opacity="0.9"/>
+      <circle cx="257" cy="584" r="3.4" opacity="0.5"/><circle cx="273" cy="584" r="3.4" opacity="0.8"/>
+    </g>
+    <!-- top edge shearing into voxels -->
+    <g fill="#67e8f9">
+      <rect x="250" y="352" width="16" height="16" opacity="0.95" transform="rotate(12 258 360)"/>
+      <rect x="286" y="336" width="13" height="13" opacity="0.8" transform="rotate(-16 292 342)"/>
+      <rect x="322" y="350" width="15" height="15" opacity="0.9" transform="rotate(24 329 357)"/>
+      <rect x="306" y="308" width="10" height="10" opacity="0.65" transform="rotate(-30 311 313)"/>
+      <rect x="268" y="300" width="8" height="8" opacity="0.5" transform="rotate(40 272 304)"/>
+      <rect x="344" y="316" width="9" height="9" opacity="0.6" transform="rotate(18 348 320)"/>
+      <rect x="368" y="352" width="11" height="11" opacity="0.7" transform="rotate(-22 373 357)"/>
+    </g>
+    <!-- rim light along dissolve line -->
+    <rect x="240" y="372" width="126" height="10" fill="url(#m-rim)" filter="url(#m-soft)" opacity="0.8"/>
+  </g>
+
+  <!-- particle river arcing to the lattice -->
+  <path d="M330 420 C 470 330, 520 420, 660 380 C 790 342, 800 300, 880 280"
+        fill="none" stroke="url(#m-river)" stroke-width="2.4" opacity="0.7"/>
+  <path d="M340 470 C 520 420, 560 480, 700 430 C 820 388, 850 340, 905 315"
+        fill="none" stroke="url(#m-river)" stroke-width="3.6"/>
+  <path d="M336 530 C 520 520, 620 540, 740 480 C 840 430, 880 380, 925 350"
+        fill="none" stroke="url(#m-river)" stroke-width="2" opacity="0.55"/>
+  <g fill="#a5f3fc">
+    <circle cx="452" cy="392" r="3.4" opacity="0.9"/><circle cx="516" cy="410" r="2.4" opacity="0.7"/>
+    <circle cx="592" cy="392" r="4" opacity="0.95"/><circle cx="668" cy="376" r="2.6" opacity="0.7"/>
+    <circle cx="742" cy="352" r="3.4" opacity="0.9"/><circle cx="806" cy="322" r="2.4" opacity="0.75"/>
+    <circle cx="486" cy="446" r="2.8" opacity="0.8"/><circle cx="576" cy="462" r="3.6" opacity="0.9"/>
+    <circle cx="664" cy="446" r="2.4" opacity="0.7"/><circle cx="752" cy="414" r="3.2" opacity="0.85"/>
+    <circle cx="836" cy="366" r="2.6" opacity="0.8"/><circle cx="562" cy="524" r="2.2" opacity="0.6"/>
+    <circle cx="676" cy="512" r="2.8" opacity="0.7"/><circle cx="790" cy="452" r="2.2" opacity="0.6"/>
+  </g>
+
+  <!-- orbital lattice -->
+  <g transform="translate(940 300)">
+    <ellipse rx="196" ry="64" fill="none" stroke="#818cf8" stroke-opacity="0.4" stroke-width="1.6" transform="rotate(-16)"/>
+    <ellipse rx="150" ry="46" fill="none" stroke="#22d3ee" stroke-opacity="0.4" stroke-width="1.4" transform="rotate(24)" stroke-dasharray="3 7"/>
+    <ellipse rx="238" ry="80" fill="none" stroke="#67e8f9" stroke-opacity="0.16" stroke-width="1.2" transform="rotate(-6)"/>
+
+    <!-- core -->
+    <g filter="url(#m-glow)">
+      <circle r="34" fill="url(#m-core)"/>
+    </g>
+    <circle r="46" fill="none" stroke="#a5f3fc" stroke-opacity="0.5" stroke-width="1.4"/>
+    <circle r="14" fill="#04101e" opacity="0.5"/>
+
+    <!-- lattice nodes -->
+    <g fill="url(#m-core)">
+      <circle cx="-176" cy="42" r="9"/>
+      <circle cx="188" cy="-50" r="11"/>
+      <circle cx="118" cy="86" r="7"/>
+      <circle cx="-120" cy="-72" r="8"/>
+      <circle cx="226" cy="30" r="5.5"/>
+      <circle cx="-226" cy="-16" r="5"/>
+    </g>
+    <g fill="none" stroke="#67e8f9" stroke-opacity="0.35" stroke-width="1.1">
+      <path d="M-176 42 L0 0 L188 -50 M-120 -72 L0 0 L118 86 M188 -50 L226 30 L118 86"/>
+      <circle cx="188" cy="-50" r="20"/>
+      <circle cx="-176" cy="42" r="16"/>
+    </g>
+  </g>
+
+  <!-- uptime chip -->
+  <g>
+    <rect x="520" y="606" width="230" height="52" rx="26" fill="#050d1c" fill-opacity="0.8" stroke="#22d3ee" stroke-opacity="0.4" stroke-width="1.3"/>
+    <circle cx="552" cy="632" r="6.5" fill="#22d3ee" filter="url(#m-glow)"/>
+    <text x="576" y="641" font-family="'Cascadia Mono','Consolas',monospace" font-size="23" letter-spacing="3" fill="#a5f3fc">UPTIME 99.99</text>
+  </g>
+
+  <!-- trajectory ticks -->
+  <g stroke="#60a5fa" stroke-opacity="0.35" stroke-width="1.2">
+    <path d="M430 560 l14 -8 M500 552 l14 -8 M570 556 l14 -8"/>
+  </g>
+
+  <rect width="1200" height="900" fill="url(#m-vign)"/>
+  <rect width="1200" height="900" filter="url(#m-grain)" opacity="0.05"/>
+</svg>

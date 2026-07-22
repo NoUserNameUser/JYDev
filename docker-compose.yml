@@ -41,6 +41,8 @@ services:
       NEXT_REVALIDATE_SECRET: ${NEXT_REVALIDATE_SECRET:?NEXT_REVALIDATE_SECRET is required}
       PAYLOAD_WEBHOOK_SECRET: ${PAYLOAD_WEBHOOK_SECRET:?PAYLOAD_WEBHOOK_SECRET is required}
       CORS_ORIGINS: ${CORS_ORIGINS:?CORS_ORIGINS is required}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:?TELEGRAM_BOT_TOKEN is required}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:?TELEGRAM_CHAT_ID is required}
     volumes:
       - payload-media:/app/media
     depends_on:
@@ -52,30 +54,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
-
-  seed:
-    profiles: ["seed"]
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: seed
-    image: portfolio-seed:latest
-    restart: "no"
-    environment:
-      NODE_ENV: production
-      NEXT_TELEMETRY_DISABLED: 1
-      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:?NEXT_PUBLIC_SITE_URL is required}
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      PAYLOAD_DB_PUSH: ${PAYLOAD_DB_PUSH:-false}
-      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?PAYLOAD_SECRET is required}
-      NEXT_REVALIDATE_SECRET: ${NEXT_REVALIDATE_SECRET:?NEXT_REVALIDATE_SECRET is required}
-      PAYLOAD_WEBHOOK_SECRET: ${PAYLOAD_WEBHOOK_SECRET:?PAYLOAD_WEBHOOK_SECRET is required}
-      CORS_ORIGINS: ${CORS_ORIGINS:?CORS_ORIGINS is required}
-    volumes:
-      - payload-media:/app/media
-    depends_on:
-      db:
-        condition: service_healthy
 
 volumes:
   postgres-data:

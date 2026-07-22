@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-label="A premium payment card orbited by a 72 percent funding ring with contributor satellites">
+  <defs>
+    <linearGradient id="c-sky" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#060a1e"/>
+      <stop offset="0.5" stop-color="#0a1030"/>
+      <stop offset="1" stop-color="#130f42"/>
+    </linearGradient>
+    <radialGradient id="c-nebula" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#6366f1" stop-opacity="0.42"/>
+      <stop offset="0.55" stop-color="#38bdf8" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="c-card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="0.55" stop-color="#3730a3"/>
+      <stop offset="1" stop-color="#1e1b4b"/>
+    </linearGradient>
+    <linearGradient id="c-sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e0f2fe" stop-opacity="0"/>
+      <stop offset="0.46" stop-color="#e0f2fe" stop-opacity="0.34"/>
+      <stop offset="0.54" stop-color="#e0f2fe" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#e0f2fe" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="c-ring" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset="0.5" stop-color="#818cf8"/>
+      <stop offset="1" stop-color="#c4b5fd"/>
+    </linearGradient>
+    <linearGradient id="c-streak" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#7dd3fc" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="c-vign" cx="0.5" cy="0.46" r="0.76">
+      <stop offset="0.6" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#03040f" stop-opacity="0.85"/>
+    </radialGradient>
+    <filter id="c-glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="c-soft" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <filter id="c-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#c-sky)"/>
+  <ellipse cx="620" cy="440" rx="480" ry="400" fill="url(#c-nebula)"/>
+
+  <!-- starfield -->
+  <g fill="#e0f2fe">
+    <circle cx="140" cy="150" r="1.7" opacity="0.7"/><circle cx="360" cy="90" r="1.2" opacity="0.5"/>
+    <circle cx="1060" cy="130" r="1.6" opacity="0.65"/><circle cx="900" cy="80" r="1.1" opacity="0.45"/>
+    <circle cx="110" cy="540" r="1.4" opacity="0.5"/><circle cx="1130" cy="500" r="1.5" opacity="0.55"/>
+    <circle cx="220" cy="780" r="1.5" opacity="0.5"/><circle cx="1010" cy="800" r="1.4" opacity="0.5"/>
+    <circle cx="660" cy="110" r="1.3" opacity="0.45"/><circle cx="480" cy="820" r="1.2" opacity="0.4"/>
+  </g>
+
+  <!-- diagonal light streak -->
+  <g transform="rotate(-18 600 250)">
+    <rect x="140" y="238" width="920" height="3" fill="url(#c-streak)"/>
+  </g>
+
+  <!-- orbital ring, back pass -->
+  <g transform="translate(600 470) rotate(-16)">
+    <ellipse rx="390" ry="128" fill="none" stroke="#818cf8" stroke-opacity="0.22" stroke-width="2"/>
+    <ellipse rx="446" ry="152" fill="none" stroke="#38bdf8" stroke-opacity="0.1" stroke-width="1.4"/>
+  </g>
+
+  <!-- satellites on back arc -->
+  <g>
+    <circle cx="300" cy="352" r="9" fill="#7dd3fc"/>
+    <circle cx="300" cy="352" r="17" fill="none" stroke="#7dd3fc" stroke-opacity="0.4" stroke-width="1.3"/>
+    <circle cx="906" cy="386" r="7" fill="#a5b4fc"/>
+  </g>
+
+  <!-- card shadow -->
+  <ellipse cx="620" cy="700" rx="300" ry="40" fill="#01020a" opacity="0.6" filter="url(#c-soft)"/>
+
+  <!-- the card -->
+  <g transform="rotate(-10 600 460)">
+    <rect x="400" y="340" width="400" height="248" rx="26" fill="url(#c-card)"/>
+    <rect x="400" y="340" width="400" height="248" rx="26" fill="url(#c-sheen)"/>
+    <rect x="400" y="340" width="400" height="248" rx="26" fill="none" stroke="#c4b5fd" stroke-opacity="0.55" stroke-width="1.6"/>
+    <rect x="401.5" y="341.5" width="397" height="245" rx="24.5" fill="none" stroke="#e0f2fe" stroke-opacity="0.25" stroke-width="1"/>
+
+    <!-- chip -->
+    <rect x="436" y="392" width="58" height="44" rx="9" fill="#fcd34d"/>
+    <path d="M436 410 h58 M436 424 h58 M458 392 v44 M476 392 v44" stroke="#92600a" stroke-opacity="0.55" stroke-width="1.6"/>
+
+    <!-- contactless -->
+    <g fill="none" stroke="#c7d2fe" stroke-opacity="0.8" stroke-width="2.2" stroke-linecap="round">
+      <path d="M530 402 a 16 16 0 0 1 0 24"/>
+      <path d="M540 394 a 27 27 0 0 1 0 40"/>
+      <path d="M550 386 a 38 38 0 0 1 0 56"/>
+    </g>
+
+    <!-- number dots -->
+    <g fill="#e0e7ff" fill-opacity="0.85">
+      <circle cx="446" cy="486" r="4"/><circle cx="462" cy="486" r="4"/><circle cx="478" cy="486" r="4"/><circle cx="494" cy="486" r="4"/>
+      <circle cx="526" cy="486" r="4"/><circle cx="542" cy="486" r="4"/><circle cx="558" cy="486" r="4"/><circle cx="574" cy="486" r="4"/>
+      <circle cx="606" cy="486" r="4"/><circle cx="622" cy="486" r="4"/><circle cx="638" cy="486" r="4"/><circle cx="654" cy="486" r="4"/>
+    </g>
+    <text x="686" y="496" font-family="'Cascadia Mono','Consolas',monospace" font-size="26" letter-spacing="2" fill="#e0e7ff">4921</text>
+
+    <g fill="#c7d2fe" fill-opacity="0.5">
+      <rect x="440" y="528" width="120" height="10" rx="5"/>
+      <rect x="440" y="548" width="76" height="9" rx="4.5"/>
+    </g>
+
+    <!-- dual moons -->
+    <circle cx="732" cy="546" r="24" fill="#e0f2fe" fill-opacity="0.3"/>
+    <circle cx="762" cy="546" r="24" fill="#818cf8" fill-opacity="0.5"/>
+  </g>
+
+  <!-- orbital ring, front pass: 72% bright arc -->
+  <g transform="translate(600 470) rotate(-16)">
+    <ellipse rx="390" ry="128" fill="none" stroke="url(#c-ring)" stroke-width="5" stroke-linecap="round"
+             pathLength="100" stroke-dasharray="72 28" stroke-dashoffset="-8" filter="url(#c-glow)"/>
+    <!-- endpoint node at 80% around -->
+    <g transform="translate(120.5 -121.7)">
+      <circle r="11" fill="#c4b5fd" filter="url(#c-glow)"/>
+      <circle r="20" fill="none" stroke="#c4b5fd" stroke-opacity="0.5" stroke-width="1.4"/>
+      <g transform="rotate(16)">
+        <rect x="20" y="-48" width="112" height="52" rx="15" fill="#0a1030" fill-opacity="0.92" stroke="#818cf8" stroke-opacity="0.6" stroke-width="1.4"/>
+        <text x="42" y="-12" font-family="'Segoe UI','Inter',system-ui,sans-serif" font-size="30" font-weight="800" fill="#c4b5fd">72%</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- satellites on front arc -->
+  <g>
+    <circle cx="384" cy="618" r="10" fill="#38bdf8" filter="url(#c-glow)"/>
+    <circle cx="384" cy="618" r="19" fill="none" stroke="#38bdf8" stroke-opacity="0.45" stroke-width="1.4"/>
+    <circle cx="700" cy="646" r="7" fill="#7dd3fc"/>
+    <circle cx="864" cy="590" r="5.5" fill="#c4b5fd"/>
+  </g>
+
+  <!-- stripe-esque pulse chip -->
+  <g>
+    <rect x="452" y="742" width="298" height="52" rx="26" fill="#0a1030" fill-opacity="0.85" stroke="#38bdf8" stroke-opacity="0.45" stroke-width="1.3"/>
+    <path d="M478 768 h20 l8 -14 l12 28 l10 -20 l6 6 h22" fill="none" stroke="#38bdf8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="576" y="776" font-family="'Cascadia Mono','Consolas',monospace" font-size="20" letter-spacing="3" fill="#a5b4fc">LIVE CHARGES</text>
+  </g>
+
+  <rect width="1200" height="900" fill="url(#c-vign)"/>
+  <rect width="1200" height="900" filter="url(#c-grain)" opacity="0.05"/>
+</svg>
