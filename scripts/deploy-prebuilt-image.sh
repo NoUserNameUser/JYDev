@@ -4,30 +4,12 @@ set -Eeuo pipefail
 
 deploy_path="${1:?deployment path is required}"
 image_ref="${2:?image reference is required}"
-registry="${3:-ghcr}"
-aws_region="${4:-}"
 
 cd "$deploy_path"
 
 if [[ ! -f .env ]]; then
   echo "Missing $deploy_path/.env. Create it from .env.production.example before deploying."
   exit 1
-fi
-
-if [[ "$registry" == "ecr" ]]; then
-  if [[ -z "$aws_region" ]]; then
-    echo "AWS_REGION is required for ECR deployments."
-    exit 1
-  fi
-
-  command -v aws >/dev/null || {
-    echo "AWS CLI is required on the EC2 host for ECR authentication."
-    exit 1
-  }
-
-  registry_host="${image_ref%%/*}"
-  aws ecr get-login-password --region "$aws_region" |
-    docker login --username AWS --password-stdin "$registry_host"
 fi
 
 previous_image="$(sed -n 's/^WEB_IMAGE=//p' .env | tail -n 1)"

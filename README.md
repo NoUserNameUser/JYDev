@@ -153,8 +153,8 @@ Local production-style build:
 docker compose up --build
 ```
 
-On EC2, use the prebuilt GHCR/ECR image and never build on the instance. See
-[`docs/registry-deployment.md`](docs/registry-deployment.md). For a fresh production database, the
+On EC2, use the prebuilt GHCR image and never build on the instance. See
+[`docs/ghcr-deployment.md`](docs/ghcr-deployment.md). For a fresh production database, the
 web container runs bundled migrations on startup; after deployment, visit `/admin` to create the first admin user.
 
 Development container:
