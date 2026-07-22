@@ -7,7 +7,7 @@ Freelancer landing site for Jackie Ye, built on Payload CMS (which runs natively
 ```bash
 npm install
 cp .env.example .env
-docker compose -f docker-compose.dev.yml up --build
+docker-compose -f docker-compose.dev.yml up --build -d --wait
 ```
 
 Or run Postgres yourself and:
@@ -44,7 +44,7 @@ Inquiry
 - status          new | in-review | replied | closed   (admin only)
 ```
 
-New inquiries appear in the admin panel under **Inbox → Inquiries** (public create, authenticated read). Form option labels live in `lib/inquiries.ts` and must stay in sync with the collection config in `payload.config.js`.
+New inquiries appear in the admin panel under **Inbox → Inquiries** (public create, authenticated read). Form option labels live in `features/inquiries/inquirySchema.ts` and must stay in sync with the collection config in `payload.config.js`.
 
 ## Content model
 
@@ -57,7 +57,7 @@ Landing page copy (hero, services, process, about) is maintained in `features/la
 
 ## Gallery
 
-`/gallery` renders the `showcases` collection on a POEZA-style draggable infinite canvas — an oversized grid you pan with pointer drag (momentum + rubberband edges), zoom with the mouse wheel, or jump around via the numbered rail. Cells are placed center-first in a spiral by `orderIndex`, so the first showcase is the opening cell.
+`/gallery` renders the `showcases` collection on a spatial draggable infinite canvas — an oversized grid you pan with pointer drag (momentum + rubberband edges), zoom with the mouse wheel, or jump around via the numbered rail. Cells are placed center-first in a spiral by `orderIndex`, so the first showcase is the opening cell.
 
 **One cell = one project.** Every card uses the same structure — index, category, artwork inlaid into the panel, title, description, stack chips — but each project carries its own accent pair, so no two cells look alike:
 
@@ -73,7 +73,7 @@ Showcase
 - orderIndex               unique; spiral placement order, centre first
 ```
 
-Cards are managed in `/admin` under Content → Showcases; changes revalidate `/gallery` automatically. The canvas implementation lives in `features/gallery/GalleryCanvas.tsx` (+ CSS module); spiral placement in `lib/gridSpiral.ts`. Off-screen cells lazy-unload via IntersectionObserver.
+Cards are managed in `/admin` under Content → Showcases; changes revalidate `/gallery` automatically. The canvas implementation lives in `features/gallery/components/GalleryCanvas.tsx` (+ CSS module); spiral placement in `features/gallery/gridSpiral.ts`. Off-screen cells lazy-unload via IntersectionObserver.
 
 To (re)seed the work set — six curated projects, each with its own hand-drawn SVG artwork in `public/images/work/`:
 
@@ -98,17 +98,23 @@ app/
   globals.css
 
 features/
+  gallery/
+    components/       # canvas and project preview UI
+    galleryContent.ts # gallery view model + fallback projects
+    gridSpiral.ts     # center-first placement algorithm
+    showcases.server.ts # Payload showcase queries
+  inquiries/
+    InquiryForm.tsx   # client-side form
+    inquirySchema.ts  # shared options + validation
+    telegram.server.ts # Telegram delivery adapter
   landing/
     LandingPage.tsx   # hero, services, process, about
-    InquiryForm.tsx   # client-side form
     SiteChrome.tsx    # shared header/footer
-  gallery/
-    GalleryCanvas.tsx # draggable infinite canvas (POEZA-style)
 
 lib/
-  inquiries.ts        # shared options + validation
   seo.ts              # metadata + structured data
   payload/client.ts   # Local API accessor
+  revalidate.ts       # cache invalidation helpers
 
 migrations/           # checked-in Payload/Postgres migrations
 styles/tokens.css     # design tokens used by tailwind.config.ts
@@ -118,6 +124,7 @@ styles/tokens.css     # design tokens used by tailwind.config.ts
 
 ```bash
 npm run dev
+npm run dev:docker      # Turbopack dev server used by Docker
 npm run build
 npm run lint
 npm run typecheck
@@ -149,8 +156,12 @@ For a fresh production database, the web container runs the bundled migrations w
 Development container:
 
 ```bash
-docker compose -f docker-compose.dev.yml up --build
+docker-compose -f docker-compose.dev.yml up --build -d --wait
 ```
+
+The web health check precompiles `/` and `/gallery` before Compose reports the service healthy. Docker uses
+Turbopack to keep route compilation within modest Docker Desktop memory limits; `npm run dev` remains available
+for the Webpack dev server when debugging a compiler-specific issue.
 
 This starts:
 
@@ -162,7 +173,7 @@ Postgres:          localhost:5432
 ## Personalization
 
 - Landing copy & services: `features/landing/LandingPage.tsx`
-- Inquiry options: `lib/inquiries.ts` + `payload.config.js` (keep in sync)
+- Inquiry options: `features/inquiries/inquirySchema.ts` + `payload.config.js` (keep in sync)
 - Site metadata / SEO / social links: `/admin` → Settings → Global Settings
 - Fallback metadata: `NEXT_PUBLIC_SITE_NAME`, `NEXT_PUBLIC_SITE_DESCRIPTION`
 - Design tokens: `styles/tokens.css` (consumed by `tailwind.config.ts`)

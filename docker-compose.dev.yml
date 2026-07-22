@@ -41,6 +41,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ >/dev/null && wget -qO- http://127.0.0.1:3000/gallery >/dev/null"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 3s
     volumes:
       # Bind the source, but keep node_modules and .next inside the container
       # so the host OS doesn't clobber platform-specific binaries.
@@ -48,7 +54,7 @@ services:
       - node-modules:/app/node_modules
       - /app/.next
       - payload-media:/app/media
-    command: sh -ec "test -d node_modules/next || npm ci; npm run dev"
+    command: sh -ec "test -d node_modules/next || npm ci; npm run dev:docker"
 
 volumes:
   payload-postgres-data:

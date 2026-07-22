@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { parseInquiry } from "@/lib/inquiries";
+import { parseInquiry } from "@/features/inquiries/inquirySchema";
 import { getPayloadClient } from "@/lib/payload/client";
-import { notifyTelegramInquiry } from "@/lib/telegram";
+import { notifyTelegramInquiry } from "@/features/inquiries/telegram.server";
 
 export const dynamic = "force-dynamic";
 
@@ -74,11 +74,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  try {
-    await notifyTelegramInquiry(result.data);
-  } catch (error) {
-    console.error("[inquiries] saved inquiry but failed to send Telegram notification:", error);
-  }
+  after(async () => {
+    try {
+      await notifyTelegramInquiry(result.data);
+    } catch (error) {
+      console.error("[inquiries] saved inquiry but failed to send Telegram notification:", error);
+    }
+  });
 
   return NextResponse.json({ ok: true }, { status: 201 });
 }

@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { GalleryCanvas } from "@/features/gallery/GalleryCanvas";
+import { GalleryCanvas } from "@/features/gallery/components/GalleryCanvas";
 import { fallbackGalleryItems, resolveWorkVisual } from "@/features/gallery/galleryContent";
 import type { GalleryItem } from "@/features/gallery/galleryContent";
 import { SiteHeader } from "@/features/landing/SiteChrome";
 import { getGlobalSettings, getSiteUrl } from "@/lib/seo";
-import { listShowcases, showcaseImageAlt, showcaseImageUrl } from "@/lib/showcases";
+import { listShowcases, showcaseImageAlt, showcaseImageUrl } from "@/features/gallery/showcases.server";
 import type { Showcase } from "@/payload-types";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getGlobalSettings();

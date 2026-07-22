@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import type { WorkVisual } from "./galleryContent";
+import type { WorkVisual } from "../galleryContent";
 
 import styles from "./ProjectPreview.module.css";
 

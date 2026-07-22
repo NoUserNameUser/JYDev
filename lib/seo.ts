@@ -1,8 +1,10 @@
+import { unstable_cache } from "next/cache";
 import type { Metadata } from "next";
 
 import { env } from "@/config/env";
 import { getPayloadClient } from "@/lib/payload/client";
-import { SERVICE_TYPES } from "@/lib/inquiries";
+import { CACHE_TAGS } from "@/lib/cacheTags";
+import { SERVICE_TYPES } from "@/features/inquiries/inquirySchema";
 import type { GlobalSetting, Media } from "@/payload-types";
 
 const SKIP_BUILD_CMS = process.env.NEXT_SKIP_BUILD_CMS === "1";
@@ -53,16 +55,27 @@ function mediaUrl(media: unknown, siteUrl: string) {
   return url ? absoluteUrl(url, siteUrl) : undefined;
 }
 
-export async function getGlobalSettings(): Promise<GlobalSetting | null> {
-  if (SKIP_BUILD_CMS) return null;
-
-  try {
+const getCachedGlobalSettings = unstable_cache(
+  async () => {
     const payload = await getPayloadClient();
     return await payload.findGlobal({
       slug: "global-settings",
       depth: 1,
       overrideAccess: false,
     });
+  },
+  ["global-settings"],
+  {
+    revalidate: 300,
+    tags: [CACHE_TAGS.payload, CACHE_TAGS.globalSettings],
+  },
+);
+
+export async function getGlobalSettings(): Promise<GlobalSetting | null> {
+  if (SKIP_BUILD_CMS) return null;
+
+  try {
+    return await getCachedGlobalSettings();
   } catch {
     return null;
   }
@@ -78,7 +91,7 @@ export function buildHomeMetadata(settings?: GlobalSetting | null): Metadata {
   const title = seo?.metaTitle || seo?.ogTitle || FALLBACK_TITLE;
   const description = seo?.metaDescription || seo?.ogDescription || FALLBACK_DESCRIPTION;
   const canonical = seo?.canonicalURL ? absoluteUrl(seo.canonicalURL, siteUrl) : siteUrl;
-  const ogImage = mediaUrl(seo?.ogImage, siteUrl) || absoluteUrl("/images/poeza-collection.png", siteUrl);
+  const ogImage = mediaUrl(seo?.ogImage, siteUrl) || absoluteUrl("/images/seo/default-og.png", siteUrl);
 
   return {
     metadataBase: new URL(siteUrl),

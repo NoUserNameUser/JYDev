@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 
-import { BUDGETS, SERVICE_TYPES } from "@/lib/inquiries";
+import { BUDGETS, SERVICE_TYPES } from "./inquirySchema";
 
 type SubmitState = { status: "idle" | "submitting" | "success" } | { status: "error"; message: string };
 
@@ -53,9 +53,8 @@ export function InquiryForm() {
         }),
       });
 
-      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-
       if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
         throw new Error(payload?.error ?? "Something went wrong. Please try again.");
       }
 

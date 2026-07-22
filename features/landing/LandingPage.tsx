@@ -1,6 +1,6 @@
 import type { GlobalSetting } from "@/payload-types";
 
-import { InquiryForm } from "./InquiryForm";
+import { InquiryForm } from "../inquiries/InquiryForm";
 import { SiteFooter, SiteHeader } from "./SiteChrome";
 
 const SERVICES = [
@@ -70,7 +70,7 @@ export function LandingPage({ settings }: { settings: GlobalSetting | null }) {
 
   return (
     <div className="relative">
-      <SiteHeader siteName={siteName} />
+      <SiteHeader siteName={siteName} isHomePage />
 
       <main id="top">
         <section className="container flex min-h-[calc(100svh-4rem)] flex-col justify-center py-section">

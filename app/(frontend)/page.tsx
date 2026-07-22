@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { LandingPage } from "@/features/landing";
+import { LandingPage } from "@/features/landing/LandingPage";
 import { buildHomeMetadata, buildHomeStructuredData, getGlobalSettings } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getGlobalSettings();
