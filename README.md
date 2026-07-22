@@ -7,7 +7,7 @@ Freelancer landing site for Jackie Ye, built on Payload CMS (which runs natively
 ```bash
 npm install
 cp .env.example .env
-docker compose -f docker-compose.dev.yml up --build
+docker-compose -f docker-compose.dev.yml up --build -d --wait
 ```
 
 Or run Postgres yourself and:
@@ -124,6 +124,7 @@ styles/tokens.css     # design tokens used by tailwind.config.ts
 
 ```bash
 npm run dev
+npm run dev:docker      # Turbopack dev server used by Docker
 npm run build
 npm run lint
 npm run typecheck
@@ -155,8 +156,12 @@ For a fresh production database, the web container runs the bundled migrations w
 Development container:
 
 ```bash
-docker compose -f docker-compose.dev.yml up --build
+docker-compose -f docker-compose.dev.yml up --build -d --wait
 ```
+
+The web health check precompiles `/` and `/gallery` before Compose reports the service healthy. Docker uses
+Turbopack to keep route compilation within modest Docker Desktop memory limits; `npm run dev` remains available
+for the Webpack dev server when debugging a compiler-specific issue.
 
 This starts:
 
