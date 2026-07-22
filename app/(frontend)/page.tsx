@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { LandingPage } from "@/features/landing";
+import { LandingPage } from "@/features/landing/LandingPage";
 import { buildHomeMetadata, buildHomeStructuredData, getGlobalSettings } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";

@@ -1,3 +1,5 @@
+import "server-only";
+
 import { getPayloadClient } from "@/lib/payload/client";
 import type { Showcase } from "@/payload-types";
 

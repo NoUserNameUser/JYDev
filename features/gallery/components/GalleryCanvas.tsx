@@ -4,9 +4,9 @@ import { animate, motion, useMotionValue } from "framer-motion";
 import type { MotionStyle } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { buildSpiralPositions } from "@/lib/gridSpiral";
+import { buildSpiralPositions } from "../gridSpiral";
 
-import type { GalleryItem } from "./galleryContent";
+import type { GalleryItem } from "../galleryContent";
 import styles from "./GalleryCanvas.module.css";
 import { ProjectPreview } from "./ProjectPreview";
 

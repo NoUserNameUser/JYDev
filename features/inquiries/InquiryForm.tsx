@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 
-import { BUDGETS, SERVICE_TYPES } from "@/lib/inquiries";
+import { BUDGETS, SERVICE_TYPES } from "./inquirySchema";
 
 type SubmitState = { status: "idle" | "submitting" | "success" } | { status: "error"; message: string };
 

@@ -1,6 +1,6 @@
 import type { GlobalSetting } from "@/payload-types";
 
-import { InquiryForm } from "./InquiryForm";
+import { InquiryForm } from "../inquiries/InquiryForm";
 import { SiteFooter, SiteHeader } from "./SiteChrome";
 
 const SERVICES = [

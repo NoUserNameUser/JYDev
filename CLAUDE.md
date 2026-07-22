@@ -33,16 +33,14 @@ app/api/inquiries/route.ts     Inquiry submission endpoint (honeypot + rate limi
 app/api/revalidate/route.ts    On-demand ISR revalidation
 app/cms/route.ts               Legacy /cms → /admin redirect
 
-features/landing/              LandingPage, InquiryForm (client), SiteChrome (shared header/footer)
-features/gallery/              GalleryCanvas (client, framer-motion) + CSS module
+features/landing/              Landing page and shared site chrome
+features/gallery/components/   Gallery client UI and colocated CSS modules
+features/gallery/              Gallery content, CMS queries, and placement algorithm
+features/inquiries/            Form UI, shared validation, and Telegram adapter
 
 lib/seo.ts                     Metadata + JSON-LD (ProfessionalService)
-lib/inquiries.ts               Inquiry option lists + server-side validation
-lib/showcases.ts               Showcase fetch + image helpers
-lib/gridSpiral.ts              Center-first spiral placement for the canvas
 lib/payload/client.ts          Local API accessor (server-only)
 lib/revalidate.ts              revalidateHome() / revalidateGallery()
-
 payload.config.js              Single source of truth for collections/globals
 payload-types.ts               GENERATED — never edit by hand
 migrations/                    Checked-in Payload/Postgres migrations (run on startup in prod)
@@ -53,7 +51,7 @@ styles/tokens.css              Design tokens consumed by tailwind.config.ts
 
 ## Conventions
 
-- After changing collections in `payload.config.js`: run `payload:migrate:create`, review the generated SQL, then `payload:generate`. Keep `lib/inquiries.ts` option lists in sync with the collection's select options.
+- After changing collections in `payload.config.js`: run `payload:migrate:create`, review the generated SQL, then `payload:generate`. Keep `features/inquiries/inquirySchema.ts` option lists in sync with the collection's select options.
 - Design uses the dark theme tokens in `styles/tokens.css` (mint `--color-primary`, dark surfaces). Reuse them via Tailwind classes rather than hardcoding colors.
 - Landing/gallery copy is hardcoded in the feature components; SEO and social links come from `/admin` Settings.
 - Follow `docs/engineering.md` PR checklist. Public API routes must return safe error messages. Images use `next/image` (canvas cells pass `unoptimized` because sources may be external/dynamic).

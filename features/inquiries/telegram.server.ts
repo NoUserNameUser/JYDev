@@ -1,5 +1,7 @@
-import { BUDGETS, SERVICE_TYPES } from "@/lib/inquiries";
-import type { InquiryInput } from "@/lib/inquiries";
+import "server-only";
+
+import { BUDGETS, SERVICE_TYPES } from "./inquirySchema";
+import type { InquiryInput } from "./inquirySchema";
 
 const TELEGRAM_MESSAGE_LIMIT = 4096;
 const TELEGRAM_TIMEOUT_MS = 8000;

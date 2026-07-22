@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { env } from "@/config/env";
 import { getPayloadClient } from "@/lib/payload/client";
-import { SERVICE_TYPES } from "@/lib/inquiries";
+import { SERVICE_TYPES } from "@/features/inquiries/inquirySchema";
 import type { GlobalSetting, Media } from "@/payload-types";
 
 const SKIP_BUILD_CMS = process.env.NEXT_SKIP_BUILD_CMS === "1";
@@ -78,7 +78,7 @@ export function buildHomeMetadata(settings?: GlobalSetting | null): Metadata {
   const title = seo?.metaTitle || seo?.ogTitle || FALLBACK_TITLE;
   const description = seo?.metaDescription || seo?.ogDescription || FALLBACK_DESCRIPTION;
   const canonical = seo?.canonicalURL ? absoluteUrl(seo.canonicalURL, siteUrl) : siteUrl;
-  const ogImage = mediaUrl(seo?.ogImage, siteUrl) || absoluteUrl("/images/poeza-collection.png", siteUrl);
+  const ogImage = mediaUrl(seo?.ogImage, siteUrl) || absoluteUrl("/images/seo/default-og.png", siteUrl);
 
   return {
     metadataBase: new URL(siteUrl),
