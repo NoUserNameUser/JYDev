@@ -3,9 +3,9 @@ import Link from "next/link";
 import type { GlobalSetting } from "@/payload-types";
 
 const NAV_ITEMS = [
-  { label: "Services", href: "/#services" },
-  { label: "How it works", href: "/#process" },
-  { label: "About", href: "/#about" },
+  { label: "Services", href: "#services" },
+  { label: "How it works", href: "#process" },
+  { label: "About", href: "#about" },
 ];
 
 function GridGlyph() {
@@ -19,7 +19,7 @@ function GridGlyph() {
   );
 }
 
-export function SiteHeader({ siteName }: { siteName: string }) {
+export function SiteHeader({ siteName, isHomePage = false }: { siteName: string; isHomePage?: boolean }) {
   return (
     <header className="sticky top-0 z-header border-b border-border bg-background/85 backdrop-blur">
       <div className="container flex h-16 items-center justify-between gap-3">
@@ -29,9 +29,13 @@ export function SiteHeader({ siteName }: { siteName: string }) {
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-8 sm:flex">
           {NAV_ITEMS.map((item) => (
-            <Link key={item.href} href={item.href} className="text-sm text-muted transition-colors hover:text-foreground">
+            <a
+              key={item.href}
+              href={isHomePage ? item.href : `/${item.href}`}
+              className="text-sm text-muted transition-colors hover:text-foreground"
+            >
               {item.label}
-            </Link>
+            </a>
           ))}
         </nav>
         <div className="flex items-center gap-2 sm:gap-3">
@@ -44,12 +48,12 @@ export function SiteHeader({ siteName }: { siteName: string }) {
             </span>
             Work Gallery
           </Link>
-          <Link
-            href="/#inquiry"
+          <a
+            href={isHomePage ? "#inquiry" : "/#inquiry"}
             className="hidden rounded-pill bg-primary px-4 py-2 text-sm font-semibold text-background transition-colors hover:bg-primary-hover sm:inline-block"
           >
             Free estimate
-          </Link>
+          </a>
         </div>
       </div>
     </header>

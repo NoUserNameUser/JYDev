@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { parseInquiry } from "@/features/inquiries/inquirySchema";
@@ -74,11 +74,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  try {
-    await notifyTelegramInquiry(result.data);
-  } catch (error) {
-    console.error("[inquiries] saved inquiry but failed to send Telegram notification:", error);
-  }
+  after(async () => {
+    try {
+      await notifyTelegramInquiry(result.data);
+    } catch (error) {
+      console.error("[inquiries] saved inquiry but failed to send Telegram notification:", error);
+    }
+  });
 
   return NextResponse.json({ ok: true }, { status: 201 });
 }

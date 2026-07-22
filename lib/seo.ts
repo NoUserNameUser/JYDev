@@ -1,7 +1,9 @@
+import { unstable_cache } from "next/cache";
 import type { Metadata } from "next";
 
 import { env } from "@/config/env";
 import { getPayloadClient } from "@/lib/payload/client";
+import { CACHE_TAGS } from "@/lib/cacheTags";
 import { SERVICE_TYPES } from "@/features/inquiries/inquirySchema";
 import type { GlobalSetting, Media } from "@/payload-types";
 
@@ -53,16 +55,27 @@ function mediaUrl(media: unknown, siteUrl: string) {
   return url ? absoluteUrl(url, siteUrl) : undefined;
 }
 
-export async function getGlobalSettings(): Promise<GlobalSetting | null> {
-  if (SKIP_BUILD_CMS) return null;
-
-  try {
+const getCachedGlobalSettings = unstable_cache(
+  async () => {
     const payload = await getPayloadClient();
     return await payload.findGlobal({
       slug: "global-settings",
       depth: 1,
       overrideAccess: false,
     });
+  },
+  ["global-settings"],
+  {
+    revalidate: 300,
+    tags: [CACHE_TAGS.payload, CACHE_TAGS.globalSettings],
+  },
+);
+
+export async function getGlobalSettings(): Promise<GlobalSetting | null> {
+  if (SKIP_BUILD_CMS) return null;
+
+  try {
+    return await getCachedGlobalSettings();
   } catch {
     return null;
   }

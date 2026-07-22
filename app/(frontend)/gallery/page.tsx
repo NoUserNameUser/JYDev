@@ -9,7 +9,7 @@ import { getGlobalSettings, getSiteUrl } from "@/lib/seo";
 import { listShowcases, showcaseImageAlt, showcaseImageUrl } from "@/features/gallery/showcases.server";
 import type { Showcase } from "@/payload-types";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getGlobalSettings();

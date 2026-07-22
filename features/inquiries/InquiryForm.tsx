@@ -53,9 +53,8 @@ export function InquiryForm() {
         }),
       });
 
-      const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-
       if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as { error?: string } | null;
         throw new Error(payload?.error ?? "Something went wrong. Please try again.");
       }
 
