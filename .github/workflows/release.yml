@@ -21,15 +21,22 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.merged == true }}
 
+    timeout-minutes: 15
     env:
       BASE_VERSION: 1.2.1
 
     steps:
       - name: Checkout master
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: master
           fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
 
       - name: Compute next version
         id: version
@@ -86,12 +93,16 @@ jobs:
 
       - name: Build release notes
         shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
         run: |
           printf '%s\n\n%s\n\n%s\n\n%s\n' \
             '## Changes' \
-            '- Merged PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}' \
+            "- Merged PR #${PR_NUMBER}: ${PR_TITLE}" \
             '## Commit' \
-            '${{ github.event.pull_request.merge_commit_sha }}' \
+            "$MERGE_SHA" \
             > RELEASE_NOTES.md
 
       - name: Create and push tag
