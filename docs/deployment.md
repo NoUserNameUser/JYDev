@@ -13,11 +13,13 @@ npm run validate:env
 4. Start the stack:
 
 ```bash
-docker compose up --build -d
+docker compose pull web
+docker compose up -d --no-build --remove-orphans
 ```
 
-For CD deployments, `WEB_IMAGE` can point at a prebuilt registry image instead of the local
-`portfolio:latest` image. Local deployments can omit `WEB_IMAGE` and keep using `--build`.
+Production EC2 deployments must use a prebuilt `WEB_IMAGE`; never build on a small instance.
+Local development can omit `WEB_IMAGE` and continue using `--build`. See
+[`ghcr-deployment.md`](ghcr-deployment.md) for the complete GHCR setup.
 
 The production Dockerfile follows Payload's recommended multi-stage Next.js standalone setup. Its
 default `NEXT_BUILD_MODE=compile` uses Next's experimental compile-only build mode so Docker does
@@ -64,10 +66,10 @@ For page-specific updates:
 
 ## GitHub Actions CD
 
-The `CD` workflow runs after the `CI` workflow succeeds on `master`, and it can also be started
-manually from the Actions tab. It builds the production Docker image, pushes it to GitHub Container
-Registry, then connects to the production host over SSH and restarts the `web` service with the new
-image.
+The `Deploy production` workflow runs after `CI` succeeds on `master`, and can also be started
+manually. It builds on a GitHub-hosted runner, pushes to GHCR, then
+deploys the digest-pinned image over SSH. GHCR authentication, first-run instructions, and
+rollback steps are in [`ghcr-deployment.md`](ghcr-deployment.md).
 
 Because image builds happen on GitHub Actions, the EC2 instance only needs enough capacity to run
 the production containers. It no longer needs enough CPU or memory for `next build` during deploys.

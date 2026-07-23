@@ -1,0 +1,150 @@
+name: Deploy production
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and push production image
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      BUILD_PLATFORM: ${{ vars.DEPLOY_PLATFORM || 'linux/amd64' }}
+      BUILD_NODE_OPTIONS: ${{ vars.BUILD_NODE_OPTIONS || '--max-old-space-size=2048' }}
+    outputs:
+      image_ref: ${{ steps.image-ref.outputs.value }}
+    steps:
+      - name: Validate build configuration
+        shell: bash
+        env:
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+        run: |
+          test -n "$NEXT_PUBLIC_SITE_URL" || {
+            echo "NEXT_PUBLIC_SITE_URL repository variable is required"
+            exit 1
+          }
+
+      - name: Checkout deploy commit
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve image name
+        id: image
+        shell: bash
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY,,}"
+          echo "name=$image" >> "$GITHUB_OUTPUT"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Generate image metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ steps.image.outputs.name }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=sha-,format=long
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+
+      - name: Build and push image
+        id: build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ env.BUILD_PLATFORM }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=production-image
+          cache-to: type=gha,mode=max,scope=production-image
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ vars.NEXT_PUBLIC_SITE_URL }}
+            NODE_OPTIONS=${{ env.BUILD_NODE_OPTIONS }}
+            NEXT_BUILD_MODE=compile
+            NEXT_SKIP_BUILD_CHECKS=1
+            NEXT_SKIP_BUILD_CMS=1
+
+      - name: Pin deploy image by digest
+        id: image-ref
+        shell: bash
+        run: echo "value=${{ steps.image.outputs.name }}@${{ steps.build.outputs.digest }}" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    name: Deploy prebuilt image to EC2
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      IMAGE_REF: ${{ needs.build.outputs.image_ref }}
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+      DEPLOY_PORT: ${{ secrets.DEPLOY_PORT || '22' }}
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+    steps:
+      - name: Checkout deploy assets
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Validate deployment configuration
+        shell: bash
+        run: |
+          test -n "$IMAGE_REF" || { echo "Built image reference is missing"; exit 1; }
+          test -n "$DEPLOY_HOST" || { echo "DEPLOY_HOST repository secret is required"; exit 1; }
+          test -n "$DEPLOY_USER" || { echo "DEPLOY_USER repository secret is required"; exit 1; }
+          test -n "$DEPLOY_SSH_KEY" || { echo "DEPLOY_SSH_KEY repository secret is required"; exit 1; }
+          test -n "$DEPLOY_PATH" || { echo "DEPLOY_PATH repository variable is required"; exit 1; }
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "$DEPLOY_PORT" -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload and run deployment
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" \
+            "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p '$DEPLOY_PATH'"
+          scp -i ~/.ssh/deploy_key -P "$DEPLOY_PORT" \
+            docker-compose.yml scripts/deploy-prebuilt-image.sh \
+            "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
+          printf -v remote_command 'bash %q %q %q' \
+            "$DEPLOY_PATH/deploy-prebuilt-image.sh" \
+            "$DEPLOY_PATH" "$IMAGE_REF"
+          ssh -i ~/.ssh/deploy_key -p "$DEPLOY_PORT" \
+            "$DEPLOY_USER@$DEPLOY_HOST" "$remote_command"

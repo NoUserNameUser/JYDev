@@ -147,11 +147,15 @@ npm run payload:generate
 
 ## Docker
 
+Local production-style build:
+
 ```bash
 docker compose up --build
 ```
 
-For a fresh production database, the web container runs the bundled migrations when it first connects to Postgres. After `docker compose up -d --build`, visit `/admin` and create the first admin user.
+On EC2, use the prebuilt GHCR image and never build on the instance. See
+[`docs/ghcr-deployment.md`](docs/ghcr-deployment.md). For a fresh production database, the
+web container runs bundled migrations on startup; after deployment, visit `/admin` to create the first admin user.
 
 Development container:
 
